@@ -1,0 +1,102 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage{multicol}
+\usepackage{nicefrac}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+
+\newcommand*{\Real}{\mathbb{R}}
+
+\begin{document}
+\title{MATH 4320 Homework 2}
+\author{Dominick Twitty}
+\maketitle
+
+\begin{enumerate}
+\item
+\begin{enumerate}[(a)]
+\item $\Real^{\geq 0}$ with operation $a \star b = \max(a,b)$ is not a group. We have that $\max(a, 0) = \max(0, a) = a$, which means the identity element $e = 0$. However, for any $a > 0$, there is no $b$ such that $\max(a, b) = 0$. There is no inverse element, so this is not a group.
+
+\item $\Real^\times$ with operation $a \star b = \frac{a}{b}$ is not a group. We attempt to verify associativity:
+\begin{align*}
+a \star (b \star c) &= (a \star b) \star c\\
+\frac{a}{\nicefrac{b}{c}} &= \frac{\nicefrac{a}{b}}{c}\\
+\frac{ac}{b} &\neq \frac{a}{bc}
+\end{align*}
+
+\item $\Real$ with operation $a \star b = \text{frac}(a, b) = ab - \lfloor ab \rfloor$ is not a group. We have an operation that is a function $\star : \Real \times \Real \rightarrow [0, 1)$. If $a$ is greater than 1, there is no $b$ such that $\text{frac}(a, b) = a$, as $a$ is not in the codomain of $\star$. Therefore, the group is not closed. 
+
+\item The cartesian product $A \times B$ where $A$ and $B$ are groups, which we call $G$, with operation $(a, b) \star (c, d) = (ab, cd)$ is a group. Because $A$ and $B$ are closed, we have that operation $\star : (A \times B) \times (A \times B) \rightarrow A \times B$, we know that $G$ is closed.
+
+We show associativity:
+\begin{align*}
+(a,b) \star ((c, d) \star (e, f)) &= ((a,b) \star (c, d)) \star (e, f)\\
+(a, b) \star (ce, df) &= (ac, bd) \star (e, f)\\
+(ace, bdf) &= (ace, bdf)
+\end{align*}
+
+Let $e$ be the identity element of $A$ and $f$ be the identity element of $B$. We have
+\begin{align*}
+(e, f) \star (a, b) &= (a,b) \star (e, f)\\
+(ea, fb) &= (ae, bf)\\
+(a, b) &= (a, b)
+\end{align*}
+
+So $(e, f)$ is the identity element of $G$. Finally, we show inverse elements:
+\begin{align*}
+(a, b) \star (a^{-1}, b^{-1}) &= (a^{-1}, b^{-1}) \star (a, b)\\
+(aa^{-1}, bb^{-1}) &= (a^{-1}a, b^{-1}b)\\
+(e, f) &= (e, f)
+\end{align*}
+
+$G$ meets all the requirements of a group.
+
+\end{enumerate}
+
+\item We have that $G$ is a finite group, and we wish to show that $\text{ord}(a) < \infty$ for all $a$ in $G$. That is, we wish to show that there exists some finite $m > 0$ such that $a^m = e$. 
+
+\begin{lemma}
+For $a$ in finite group $G$, there exists $m \neq n$ such that $a^n = a^m$.
+\end{lemma}
+\begin{proof}
+By the closure property of groups, we have that $a^k \in G$. By the pigeonhole principle, the list $a^1, a^2, a^3,\ldots$ must eventually repeat. If the list did not repeat, $G$ could not be closed unless $G$ were infinite. Because the list repeats, there must exist two powers that equal each other.
+\end{proof}
+
+\begin{lemma}
+For $a$ in finite group $G$, $a$ must have some idempotent power. That is, there exists some $k$ such that $a^k a^k = a^k$.
+\end{lemma}
+\begin{proof}
+By the previous lemma, we have some $m \neq n$ with $a^m = a^n$. We set $m = k$ and $n = k + l$. We have:
+
+
+\end{proof}
+
+\begin{lemma}
+Every $a$ in finite group $G$ has an idempotent power. That is, there exists some $k$ such that $a^k a^k = a^k$.
+\end{lemma}
+
+\item 
+\begin{lemma}
+If $G$ is a group and for all $x$ in $G$ we have $x^2 = 1$, then $G$ is abelian.
+\end{lemma}
+\begin{proof}
+Showing that a group is abelian is equivalent to showing $xy = yx$.
+\begin{align*}
+xy &= yx\\
+y(xy)x &= y(yx)x\\
+(yx)(yx) &= (yy)(xx)\\
+(yx)^2 &= y^2 x^2\\
+1 &= 1
+\end{align*}
+
+\end{proof}
+
+
+\end{enumerate}
+
+
+\end{document}

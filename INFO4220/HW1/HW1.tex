@@ -1,0 +1,132 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumerate}
+\usepackage{multicol}
+\usepackage{mathtools}
+\usepackage{domtools}
+\usepackage{tikz}
+\usetikzlibrary{positioning,chains,fit,shapes,calc}
+
+\newcommand*\Let[2]{\State #1 $\gets$ #2}
+\begin{document}
+\title{INFO 4220 Homework 1}
+\author{Dominick Twitty}
+\maketitle
+
+\section{(Conditional Probabilities and Reviews)}
+Let $Y$ be the event that a doctor is good, and $Y'$ be the event a doctor is bad. Let $X$ be the event that a patient rates a doctor as good, and $X'$ be the event that a patient rates a doctor as bad.
+We are given the following:
+\begin{align*}
+P(X' | Y') = 0.95 & & P(X' | Y) = 0.01\\
+\shortintertext{From this we infer:}
+P(X | Y') = 0.05 & & P(X | Y) = 0.99
+\end{align*}
+
+\begin{enumerate}[(a)]
+\item We are given that $P(Y') = 0.005 \implies P(Y) = 0.995$. We wish to find $P(Y' |  X')$. We apply Bayes' theorem
+$$P(Y' | X') = \frac{P(X' | Y')P(Y')}{P(X' | Y')P(Y') + P(X' | Y)P(Y)} = \frac{(0.95)(0.005)}{(0.95)(0.005) + (0.01)(0.995)} = 0.32$$
+
+Given that a patient rated a doctor as bad, there is a 32\% chance the doctor is actually bad. We have that $P(X' | Y')$ is the probability that a bad doctor gets rated as bad once, so $P(X' | Y')^2$ is the probability that this happens twice. We square the appropriate probabilities to get
+
+$$P(Y' | 2X') = \frac{P(X' | Y')^2P(Y')}{P(X' | Y')^2P(Y') + P(X' | Y)^2P(Y)} = \frac{(0.95)^2(0.005)}{(0.95)^2(0.005) + (0.01)^2(0.995)} = 0.98$$
+
+That is, a doctor who is rated as bad twice is a bad doctor with 98\% probability.
+
+\item We are given that $P(Y') = 0.7 \implies P(Y) = 0.3$. We again apply Bayes' theorem
+
+$$P(Y' | X') = \frac{P(X' | Y')P(Y')}{P(X' | Y')P(Y') + P(X' | Y)P(Y)} = \frac{(0.95)(0.7)}{(0.95)(0.7) + (0.01)(0.3)} = 0.996$$
+
+That is, a doctor who is rated as bad is a bad doctor with $99.6\%$ probability.
+
+\end{enumerate}
+
+\section{(Deductive Reasoning)}
+Let $C$ be the set of enrolled students and $F$ be the set of students on Facebook. The claim we are investigating is 
+
+$$s \in C \implies s \in F$$
+
+\noindent Which is equivalent to the claim
+
+$$C \subset F$$
+
+The only way to prove $C \subset F$ is to confirm that every element of $C$ is also in $F$. However, a single counter-example (some $s$ in $C$ that is not in $F$) is enough to disprove the claim.
+\begin{enumerate}[(a)]
+\item No single student can prove the claim, but a single student can disprove the claim. We assign each named student the label $s$, to keep with our previous terminology. We examine 
+\begin{enumerate}[i.]
+\item
+We are given $s \in C$. If $s \in F$, the claim is supported but not proven. If $s \notin F$, we have found a counter-example and have disproven the claim.
+
+\item
+We are given $s \notin C$. Subset testing only considers members of $C$, so we cannot determine the validity of the claim based on $s$, regardless of inclusion in $F$.
+
+\item
+We are given $s \in F$. If $s \in C$ we can support but not prove the claim. If $s \notin C$, we cannot consider $s$ in subset testing and cannot use $s$ to determine the validity of the claim.
+
+\item
+We are given $s \notin F$. If $s \in C$, we have found a counter-example and have disproven the claim. If $s \notin C$, we cannot use $s$ to determine the validity of the claim.
+\end{enumerate}
+
+\item The only way to prove the claim is to confirm that every student in $C$ is also in $F$. This involves checking the Facebook registration of all 130 students. In order to prove the claim false, one must find at least one student from the class who is not registered on Facebook.
+\end{enumerate}
+
+\section{(Pareto Efficiency)}
+We refer to each app as $N(f, u)$, where $N$ is the app name, $f$ is the number of friends, and $u$ is the usability score. An app $N(f, u)$ Pareto-dominates $M(f', u')$ if and only if $f \geq f'$, $u \geq u'$, and $f > f'$ or $u > u'$.
+\begin{enumerate}[(a)]
+\item We compare $G(279, 3)$ to $B(53, 9)$. Neither app dominates the other in both categories, so the first condition does not hold. Therefore, neither app Pareto-dominates the other.
+
+\item The set of apps that $G$ Pareto-dominates is a subset of the apps that have a lesser or equal usability score. Only one app, $A$, has a lower usability score. $G(279, 3)$ Pareto-dominates $F(64, 1)$, as it is at least as good in both categories, and is strictly better in both categories. App $G$ is not Pareto-optimal, as there exist apps that Pareto-dominate $G$. For example, both $C$ and $D$ Pareto-dominate $G$.
+
+\item App $E$ is not Pareto-optimal. For example, app $C$ dominates $E$. However, $E$ does dominate $A$.
+
+\item Apps $B$, $C$, and $D$ are Pareto-optimal. This was checked using the all-pairs algorithm (code not shown).
+\end{enumerate}
+
+\section{(Binary Preferences and Pareto-Efficiency)}
+We exploit the ambiguity of Bob's algorithm to show it's non-optimality. 
+\begin{enumerate}[(a)]
+\item We construct an example where Bob's method is not Pareto-efficient. We describe the situation graphically:
+
+\begin{center}
+\definecolor{myblue}{RGB}{80,80,160}
+\definecolor{mygreen}{RGB}{80,160,80}
+
+\begin{tikzpicture}[thick,
+  every node/.style={draw,circle},
+  fsnode/.style={fill=myblue},
+  ssnode/.style={fill=mygreen},
+  every fit/.style={ellipse,draw,inner sep=-2pt,text width=2cm},
+  ->,shorten >= 3pt,shorten <= 3pt
+]
+
+\begin{scope}[start chain=going below,node distance=7mm]
+\foreach \i in {1,2}
+  \node[fsnode,on chain] (s\i) [label=left: $s_\i$] {};
+\end{scope}
+
+\begin{scope}[xshift=4cm,start chain=going below,node distance=7mm]
+\foreach \i in {1,2}
+  \node[ssnode,on chain] (r\i) [label=right: $r_\i$] {};
+\end{scope}
+
+% the set U
+\node [myblue,fit=(s1) (s2),label=above:$S$] {};
+% the set V
+\node [mygreen,fit=(r1) (r2),label=above:$R$] {};
+
+% the edges
+\draw (s1) -- (r1);
+\draw (s1) -- (r2);
+\draw (s2) -- (r1);
+\end{tikzpicture}
+\end{center}
+
+We assume Bob considers $s_1$ before $s_2$. We also assume that Bob allocates rooms in order. So, Bob will match $s_1$ with $r_1$. There will then be no match left for $s_2$. This matching $M$ would then be $\{(s_1, r-1)\}$. Consider the matching $M' = \{(s_1, r_2), (s_2, r_1)\}$. $M'$ Pareto-dominates $M$, as no student's happiness decreases, and one student's happiness strictly increases. Therefore, Bob's assignments are not guaranteed to be Pareto-efficient.
+
+\item We assume that there is some matching $M'$ that Pareto-dominates Alice's maximum matching $M$. So, every student matched in $M$ must also be in $M'$, and $M'$ must also include some student not in $M$. This means that $|M'| > |M|$. However, this cannot happen, by the definition of a maximum matching. By contradiction, we have proven that a maximum matching $M$ cannot be Pareto-dominated and is therefore Pareto-efficient.
+
+\item The example given in (a) is a situation where Bob will match less than or equal to the number of students that Alice does. In general, for Bob's algorithm to produce maximum matchings, he would have to order students and pick rooms in the order of a maximum matching, which would require prior knowledge of said matching.
+\end{enumerate}
+
+
+\end{document}

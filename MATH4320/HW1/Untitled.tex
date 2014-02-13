@@ -1,0 +1,233 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage{multicol}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+
+\begin{document}
+\title{MATH 4320 Homework 1}
+\author{Dominick Twitty}
+\maketitle
+
+
+\section{Injectivity and Surjectivity}
+\subsection*{Injectivity}
+We have definitions:
+\begin{enumerate}[(a)]
+\item A function $f : X \rightarrow Y$ is injective if $f(x) = f(y)$ implies $x = y$ for all $x, y$
+\item A function $f : X \rightarrow Y$ is injective if there exists $l : Y \rightarrow X$ with $l \circ f = I_X$
+\end{enumerate}
+
+\begin{lemma}
+$I_X$ is an injection.
+\end{lemma}
+\begin{proof}
+\begin{align*}
+\forall x \in X : I_X(x) = x & & \text{definition of identity}\\
+I_X(x) = I_X(y) \implies x = y & & \text{from the above}
+\end{align*}
+$I_X$ satisfies the first definition of injection, therefore $I_X$ is an injection. 
+\end{proof}
+
+We are given that there exists some $l$ such that $l \circ f = I_X$. This implies that $l \circ f$ is an injection.
+
+\begin{lemma}
+Given $f : X \rightarrow Y$ and $g : Y \rightarrow Z$,
+$g \circ f$ is injective $\implies$ $f$ is injective.
+\end{lemma}
+\begin{proof}
+We must show that $f(a) = f(b) \implies a = b$. Suppose $f(a) = f(b)$.
+\begin{align*}
+g \circ f(a) &= g(f(a))\\
+&= g(f(b))\\
+&= g\circ f(b)
+\end{align*}
+By the definition of $g \circ f$ as injective, $f(a) = f(b) \implies g \circ f(a) = g \circ f(b) \implies a = b$. 
+Therefore, $g \circ f$ is injective $\implies$ $f$ is injective.
+\end{proof}
+
+Let $f^{-1} : \mathrm{Im}(f) \rightarrow S$ be the function that maps $y \in \mathrm{Im}(f)$ to the unique $x \in X$ with $f(x) = y$. 
+\begin{lemma} 
+$\exists \, l$ with $l \circ f = I_X$ $\iff$ $f(x) = f(y) \implies x = y$
+\end{lemma}
+\begin{proof}
+First, we show that the existence of $l$ implies the first definition of injection. By Lemma 1, we know that $l \circ f$ is an injection. By Lemma 2, we know this implies that $f$ is an injection (under the first definition).
+
+To show the reverse, we show that we can create a mapping $l$ such that if $f$ is an injection under the first definition, then $l \circ f = I_X$. Assuming that $X \neq \emptyset$, we choose an arbitrary element $x_0 \in X$. We define $l : Y \rightarrow X$:
+\[
+l(y) = \begin{cases}
+x_0 & y \in Y \setminus \mathrm{Im}(f)\\
+f^{-1}(y) & y \in \mathrm{Im}(f)
+\end{cases}
+\]
+
+Under the first definition of injection, $f^{-1}$ is a mapping. This implies that $l$ is also a mapping. So, for all $x \in X$, $l \circ f(x) = l(f(x)) = f^{-1}(f(x)) = x$. Therefore, $l \circ f = I_X$. We have shown that each definition implies the other, therefore the two definitions are equivalent.
+\end{proof}
+
+\subsection*{Surjectivity}
+We now have definitions:
+\begin{enumerate}[(a)]
+\item A function $f : X \rightarrow Y$ is surjective if for all $y \in Y$ there exists $x \in X$ with $f(x) = y$
+\item A function $f : X \rightarrow Y$ is surjective if there exists $r : Y \rightarrow X$ with $f \circ r = I_Y$
+\end{enumerate}
+
+\begin{lemma}
+$I_Y$ is surjective.
+\end{lemma}
+\begin{proof}
+For all $y \in Y$, there must exist some $x \in Y$ such that $I_Y(x) = y$. By the definition of identity, when $x = y$, $I_Y(x) = I_Y(y) = y$. We can Therefore, $I_Y$ satisfies the first definition of surjective.
+\end{proof}
+
+We are given that $f \circ r = I_Y$, which implies that $r \circ r$ is surjective.
+\begin{lemma}
+Given functions $f : X \rightarrow Y$ and $g : Y \rightarrow Z$,
+$g \circ f$ is surjective $\implies$ $g$ is surjective.
+\end{lemma}
+\begin{proof}
+Let $z$ be an element of $Z$. First, we find $x \in X$ with $g \circ f(x) = z$. We can always do this because $g \circ f$ is surjective. Next, we find some $y \in Y$ with $f(x) = y$. This is done as easily as applying $f$ to $x$. We have:
+\begin{align*}
+g(y) &= g(f(x))\\
+&= g \circ f(x)\\
+&= z
+\end{align*}
+We have shown that for any $z \in Z$, finding some $x \in X$ such that $g \circ f(x) = z$ implies we can find some $y \in Y$ such that $g(y) = z$. We can always find this $x$ because $g \circ f$ is surjective, so we can always find $y$. Therefore, $g$ meets the first definition of surjective.
+\end{proof}
+
+We redefine $f^{-1}(y)$ to be the preimage of $y$ under $f$.
+
+\begin{lemma}
+$\exists \, r$ with $f \circ r = I_Y$ $\iff$ $\forall y \in Y, \, \exists \, x \in X$ with $f(x) = y$.
+\end{lemma}
+\begin{proof}
+First, we show the existence of $r$ implies the first definition of surjective. By Lemma 4, we know that $f \circ r$ is surjective. By Lemma 5, we know this implies that $f$ is surjective (under the first definition).
+
+To show the reverse, we create a mapping $r$ such that if $f$ is surjective under the first definition, then $f \circ r = I_Y$. Consider the family of sets $\{f^{-1}(y)\}_{y \in Y}$. We know that each set is non-empty because $f$ is surjective. By the axiom of choice, we can create a mapping $r$ such that $r(y) \in f^{-1}(y)$ for all $y \in Y$. We have:
+\begin{align*}
+f \circ r(y) &= f(r(y))\\
+&= f(x : x \in f^{-1}(y))\\
+&= y
+\end{align*}
+We have that $f \circ r(y) = y$, which implies $f \circ r = I_Y$. We have shown that the existence of $r$ implies that $f$ is surjective under the first definition, and shown that if is surjective under the first definition, we can construct $r$. Therefore, the two definitions are equivalent.
+\end{proof}
+
+\subsection*{Bijectivity}
+\begin{theorem}
+If $f$ is bijective, $l = r$ and is unique.
+\end{theorem}
+\begin{proof}
+
+Under the definition of bijective, $f$ is injective with left inverse $l$ and surjective with right inverse r.
+
+\begin{align*}
+(l \circ f) \circ r &= l \circ (f \circ r) & &\text{associativity of composition}\\
+I_X \circ r &= l \circ I_Y & & \text{definition of left and right inverses}\\
+r &= l & & \text{definition of identity}
+\end{align*}
+
+We have shown that $l = r$. Let $g = l = r$. We assume there is some $h \neq g$ that is also both a left and right inverse of $f$. then we would have:
+\begin{align*}
+h \circ f &= I_X\\
+h \circ f \circ g &= I_X \circ g\\
+h \circ I_Y &= g\\
+h &= g
+\end{align*}
+
+This is a contradiction. Therefore we have shown that if $f$ is bijective, $l = r$ and is unique.
+ 
+\end{proof}
+
+\section{Even Numbers of Transpositions}
+
+\begin{lemma}
+$a,b \in A_n \implies ab \in A_n$.
+\end{lemma}
+\begin{proof}
+By the associativity of permutations, we have that
+\begin{align*}
+ab &= (a)(b)\\
+&= ((a_1 a_n)\ldots(b_1 b_2))((b_1 b_n)\ldots(b_1 b_2))\\
+&= (a_1 a_n)\ldots(b_1 b_2)(b_1 b_n)\ldots(b_1 b_2)
+\end{align*}
+So, we have that the number of transpositions in $ab$ is the sum of the number of transpositions in $a$ and $b$. As the sum of two even numbers is even, $ab$ has an even number of transpositions, and is therefore in $A_n$. 
+\end{proof}
+
+\begin{lemma}
+$a \in A_n \implies a^{-1} \in A_n$
+\end{lemma}
+\begin{proof}
+We know that $a$ can be decomposed into disjoint cycles $a_1\ldots a_n$, and that the sum of the number of transpositions in those cycles is even. Because each $a_i$ is disjoint, we know that $a^{-1} = a_1^{-1}\ldots a_n{-1}$. Because the inverse of a cycle $b$ is just the reversal of the ordering of that cycle, we know that $\mathrm{sgn}(b) = \mathrm{sgn}(b^{-1})$. So, the sum of transpositions in each $a_i$ is equal to the sum of transpositions in each $a_i^{-1}$, so if $a$ has an even number of transpositions, $a^{-1}$ also has an even number of cycles, and is in $A_n$.
+\end{proof}
+
+
+\section{Permutation Matrices}
+
+
+\section{Permutation Representations}
+\begin{enumerate}[(a)]
+\item $\sigma = (1 3)(1 2 3 4)(1 3) = (1 4 3 2) = \begin{pmatrix} 1 & 2 &3 &4\\ 4 &1 &2 &3 \end{pmatrix} = (12)(13)(14), \mathrm{sgn}(\sigma) = -1$ 
+\item $\sigma = (1 2)(1 3)(2 3 4) = (1 3 4)(2) = \begin{pmatrix} 1 & 2 & 3 & 4 \\ 3 & 2 & 4 & 1 \end{pmatrix} = (14)(13), \mathrm{sgn}(\sigma) = 1$
+\item $\sigma = (1 5)(1 5 2)(2 7 8) = (1)(2 7 8 5) = \begin{pmatrix} 1 & 2 & 5 & 7 & 8 \\ 1 & 7 & 2 & 8 & 5\end{pmatrix} = (2 5)(2 8)(2 7), \mathrm{sgn}(\sigma) = -1$
+\end{enumerate}
+
+
+\section{Multiplication by Transpositions}
+The main ``trick'' we use here is massaging cycles into and out of products of transpositions.
+Let $\gamma = \alpha^{-1} \beta \alpha$ There are three situations to consider:
+\begin{enumerate}
+\item $i, j \notin \beta$: as $\alpha$ and $\beta$ are disjoint, $\beta$ will not move any element in $\alpha$ and vice-versa.
+\begin{align*}
+\alpha^{-1} \beta \alpha &= \alpha^{-1}(\beta \alpha) & & \text{associativity of composition}\\
+&= \alpha^{-1}(\alpha \beta) & & \text{commutativity of disjoint cycles}\\
+&= (\alpha^{-1}\alpha)\beta & & \text{associativity of composition}\\
+&= \mathrm{id} \, \beta & & \text{definition of inverse function}\\
+&= \beta & & \text{definition of identity}
+\end{align*}
+
+\item One of $i,j \in \beta$: We say that $i \in \beta, j \notin \beta$. By decomposition of a cycle into transpositions, we have that 
+\[
+\beta = (\beta_1 \beta_n)(\beta_1 \beta_{n - 1})\ldots(\beta_1 i)\ldots(\beta_1 \beta_2)
+\]
+We again use the commutativity of disjoint cycles. We have
+\begin{align*}
+\alpha^{-1}\beta \alpha &= (ij)(\beta_1 \beta_n)(\beta_1 \beta_{n - 1})\ldots(\beta_1 i)\ldots(\beta_1 \beta_2)(ij)\\
+&= (\beta_1 \beta_n)(\beta_1 \beta_{n - 1})\ldots(ij)(\beta_1 i)(ij)\ldots(\beta_1 \beta_2)\\
+&= (\beta_1 \beta_n)(\beta_1 \beta_{n - 1})\ldots (ij) (\beta_1 i j)  \ldots(\beta_1 \beta_2)\\
+&= (\beta_1 \beta_n)(\beta_1 \beta_{n - 1})\ldots (\beta_1 j)(i)  \ldots(\beta_1 \beta_2)
+\end{align*}
+
+Which means that we effectively fix $i$ and replace $i$ in $\beta$ with $j$. That is
+\begin{align*}
+\beta &= (\beta_1 \beta_2 \ldots i\ldots \beta_n)\\
+\implies \gamma &= (\beta_1 \beta_2 \ldots j\ldots \beta_n)
+\end{align*}
+
+\item Both $i$ and $j$ are in $\beta$. We have
+
+\[
+\beta = (\beta_1 \beta_n)(\beta_1 \beta_{n - 1})\ldots(\beta_1 i)\ldots(\beta_1 j)\ldots(\beta_1 \beta_2)
+\]
+
+We again decompose into transpositions and use commutativity of disjoint cycles.
+\begin{align*}
+\alpha^{-1}\beta \alpha &= (ij)(\beta_1 \beta_n)(\beta_1 \beta_{n - 1})\ldots(\beta_1 i)\ldots(\beta_1 j)\ldots(\beta_1 \beta_2)(ij)\\
+&= (\beta_1 \beta_n)(\beta_1 \beta_{n - 1})\ldots(ij)(\beta_1 i) \ldots(\beta_1 j)(ij)\ldots(\beta_1 \beta_2)\\
+&= (\beta_1 \beta_n)(\beta_1 \beta_{n - 1})\ldots(i\beta_1 j) \ldots(j i \beta_1)\ldots(\beta_1 \beta_2)\\
+&= (\beta_1 \beta_n)(\beta_1 \beta_{n - 1})\ldots(j \beta_1)(j i) \ldots(ij)(i \beta_1)\ldots(\beta_1 \beta_2)\\
+\shortintertext{The sub-cycle $(j i) \ldots (ij)$ is equivalent to the first case}
+&= (\beta_1 \beta_n)(\beta_1 \beta_{n - 1})\ldots(j \beta_1)\ldots(i \beta_1)\ldots(\beta_1 \beta_2)\\
+&= (\beta_1 \beta_n)(\beta_1 \beta_{n - 1})\ldots(\beta_1 j)\ldots(\beta_1 i)\ldots(\beta_1 \beta_2)\\
+\end{align*}
+We see that we have effectively switched $i$ and $j$ in $\beta$. That is
+\begin{align*}
+\beta &= (\beta_1 \beta_2 \ldots i\ldots j\ldots \beta_n)\\
+\implies \gamma &= (\beta_1 \beta_2 \ldots j\ldots i\ldots \beta_n)
+\end{align*}
+
+\end{enumerate}
+
+
+\end{document}

@@ -1,0 +1,22 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+
+\begin{document}
+Dominick Twitty (dkt36)\\
+Critique of ``Dude, srsly?: The Surprisingly Formal Nature of Twitter's Language''\\
+Authors: Yuheng Hu, Kartik Talamadupula, Subbarao Kambhampati\\
+
+The first aspect of the paper that struck me was the huge gap in complexity between linguistic quantifiers and SOCLIN. That is, most linguistic quantifiers appear to be glorified statistics, usually of the form "sum of frequency over size". The explanation of these quantifiers, how they are implemented, and their usefulness in terms of characterizing a medium is adequately explained. In contrast, the explanation of SOCLIN itself is a bit impenetrable. 
+
+The overall goal of SOCLIN is given well enough, that is, to separate term aspects from document aspects given a term-document matrix. However, the equations and algorithm given are not adequately explained. The entire algorithm save minute details is presented, but its derivation is not explained. I believe the authors would have done better to discuss the finer details of their system rather than stonewall readers with matrix equations.
+
+Algorithms aside, the scope of the research is impressive, though a bit lopsided. Is it fair to compare tweets to chat messages when you have 46 million tweets but only 10,000 chat messages (each of which is a third the length of the average tweet)? The chat logs were also taken from 2006, which the tweets were collected in 2012. They may have done better to use a more contemporary source, Facebook messages being ideal (if hard to obtain). On the other hand, the other datasets seem fair in their level of representation and modernity. The authors do also note that the differing time periods of their datasets is a potential weakness.
+
+I do believe that the ideas presented in this paper are mature enough for future applications. One obvious application would be in tracking language evolution. I would not be surprised if studies have been conducted comparing corpora from 1900 to corpora from 2000, but the introduction of SOCLIN to this process would allow more insight into the affective and cognitive aspects of the corpora. A system like this could allow historians to track public (or at least written) opinion in relation to major historical events. 
+
+Another interesting future use of systems like this would be in social networking. One could imagine comparing social network structure based on hard connections (likes, followers) to connections inferred through examining each individual (or closely connected group) as a corpus. One possible limitation here would be the sheer number of corpora (most of them small).
+
+On the whole, I believe the authors did well to support their results of their model with relatable insight. For example, they explain that the low prevalence of informalities ("u" and "i") is countered by higher word frequency and lexical density in order to meet the space requirements of the medium. Finally, the juxtaposition with believable results on better-understood media such as the news helps me as a reader believe their results for the less understood media such as Twitter.
+
+
+\end{document}
