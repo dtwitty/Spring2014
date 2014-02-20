@@ -164,6 +164,11 @@ We know that $a$ can be decomposed into disjoint cycles $a_1\ldots a_n$, and tha
 
 
 \section{Permutation Matrices}
+First, we notice that a permutation matrix $M_\sigma$ permutes the rows (and therefore columns) of the identity matrix such that row $M_{\sigma(i)}$ is row $I_i$ of the identity matrix. Next, we notice that multiplying an arbitrary matrix $A$ on the left by a permutation matrix $M_\sigma$ will permute the columns of $A$ according to $\sigma$. So, we have that multiplying a permutation matrix $M_\tau$ on the left by $M_\sigma$ will permute the columns of $M_\tau$ by $\sigma$. This is equivalent to permuting the columns of the identity matrix by $\tau$, and then by $\sigma$, which is exactly the outcome of generating $M_{\sigma \circ \tau}$. So, we have that $M_{\sigma \circ \tau} = M_\sigma M_\tau$.
+
+We have shown that permutation matrices multiply in the same way as permutations, so we can show that a permutation matrix can be decomposed into a number of transposition matrices, which are the identity matrix with two rows swapped. Each of these has determinant $-1$. If $\sigma$ can be decomposed into $n$ transpositions, $M_\sigma$ can be decomposed into $n$ transposition matrices. So we have that $\mathrm{sgn}(\sigma) = (-1)^n = \mathrm{det}(M_\sigma)$.
+
+
 
 
 \section{Permutation Representations}
@@ -226,6 +231,7 @@ We see that we have effectively switched $i$ and $j$ in $\beta$. That is
 \beta &= (\beta_1 \beta_2 \ldots i\ldots j\ldots \beta_n)\\
 \implies \gamma &= (\beta_1 \beta_2 \ldots j\ldots i\ldots \beta_n)
 \end{align*}
+
 
 \end{enumerate}
 

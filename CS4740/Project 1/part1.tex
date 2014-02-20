@@ -1,0 +1,245 @@
+\documentclass[12pt]{article}
+
+\usepackage{fullpage}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize\ttfamily,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=Python,                 % the language of the code
+  morekeywords={*,...},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+\begin{document}
+\title{CS 4740 Project 1: $N$-Gram Models\\
+Part 1}
+\author{Dominick Twitty (dkt36)}
+\maketitle
+
+\begin{abstract}
+Here we explore Markov language models through the use of $N$-grams. In this first installment, we discuss the implementation of a model that can generate random sentences based on a training corpus, using an arbitrary user-defined history length to choose each word. In the future, this system will gain the ability to handle assigning probabilities to combinations it has not seen before, and will be applied to the task of judging the truthfulness of hotel reviews.
+\end{abstract}
+
+\section{Building the Model}
+First, we discuss the assumptions made in developing the model, then explore the details of its implementation.
+\subsection{Assumptions}
+The tokenization strategy we use likely has the greatest impact on the accuracy and usability of our model. We  made the following assumptions:
+\begin{itemize}
+\item Capitalization does not matter. That is, ``Cassandra'' and ``cassandra'' are considered equal. We make this assumption to simplify code. We also do not use capitalization as a sentence-begin marker.
+\item Punctuation marks are valid tokens. That is, (``there'', ``,'', ``by'') is considered a valid 3-gram from the sentence ``over there, by the pool.'' We believe this is a valid assumption to make, as punctuation marks play a role in the next possible word. 
+\item All text given to the model can be expressed in discrete sentences. It simplifies our job greatly to make this assumption, especially because it keeps us from making an assumption about sentence enders. For instance, we cannot assume a sentence ``Chester A. Arthur fell down the stairs'' is actually two sentences.
+\item The first $N$ words in a sentence may be treated as a single word. This is likely the assumption with the greatest chance of introducing errors, but it is a very straightforward strategy for handing the corner case where we must reason about the start of a sentence (given a history length less than $N$). 
+\end{itemize}
+
+We used the external NLTK library \cite{NLTK}for its sentence and punctuation tokenizers because they fit our assumptions and present us with an easy-to-use interface.
+
+\subsection{Implementation}
+Discounting implementation trivia such as preprocessing, regular expressions, and helper functions, we present the ``meat'' of our model below.
+\begin{lstlisting}
+class NGramModel:
+	def __init__(self, n = 2):
+		self.n = n
+		# this table contains all the probabilities
+		# ' ' and '' are the start and end tokens
+		self.probabilities = {' ' : {}}
+
+	def add_path(self, path):
+		l = len(path)
+		# add the first n-gram as a sentence starter
+		add_occurrence(self.probabilities, ' ', tuple(path[0:self.n]))
+		# update each n-gram : word pair
+		for (given, word) in yield_n_grams(self.n, path):
+			add_occurrence(self.probabilities, given, word)
+
+	def next_word(self, curr):
+		probs = self.probabilities[curr]
+		# we use a weighted random by summing
+		threshold = randint(0, sum(probs.itervalues()))
+		count = 0
+		for (key, val) in probs.iteritems():
+			count += val
+			if count >= threshold:
+				return key
+
+	def random_sentence(self):
+		sentence = []
+		# pick a starting n-gram
+		curr = self.next_word(' ')
+		sentence.extend(curr)
+		# continue adding words until end token or dead end
+		while curr != '' and curr in self.probabilities:
+			word = self.next_word(curr)
+			sentence.append(word)
+			curr = shift_tuple(curr, word)
+		return " ".join(sentence)
+\end{lstlisting}
+
+\subsubsection{Data Structures}
+The main data structure in use here is a two-level dictionary. We map $N$-grams to another map containing occurrence counts. For example, in a bigram model where we have seen the phrase ``dog ate dirt'' one hundred times and ``dog ate Claire'' once, we would see \verb|{('dog', 'ate') : {'dirt' : 100, 'claire': 1}}| as a subset of our probabilities map.
+
+\subsubsection{$N$-Gram Generation}
+It is worth going into detail on how the $N$-grams are generated. We make liberal use of the Python's expressivity, but we present commented code to help the reader understand the process.
+\begin{lstlisting}
+def yield_n_grams(n, tokens):
+	l = len(tokens)
+	# i is the index of the start of the n-gram
+	for i in xrange(0, l - n):
+	    # the n-gram is a tuple of n words starting at index i
+		n_gram = tuple(tokens[i : i + n])
+		# the associated word comes immediately after
+		word = tokens[i + n]
+		# present this event
+		yield (n_gram, word)
+	# present the event that the last n words end the sentence
+	yield (tuple(tokens[-n:]), '')
+\end{lstlisting}
+
+A close observer will notice that the sentence-begin token points to a map of $N$-gram counts while all other entries in the probability table are $N$-grams which point to word counts. This is a way of expressing the start of a sentence as a single word.
+\\
+
+\noindent We believe our approach is very easy to understand and reason about. This approach may not work as well in a less expressive language than Python, as it requires arbitrary tuples and abuses the lack of type-safety. We also have little so say on the time and space complexity of this model, as we worked on the philosophy of ``code it correct and then code it fast''.
+
+\section{Random Sentence Generation}
+Our model generates sentences similarly to the classic ``Dissociated Press'' algorithm one can find available in Emacs \cite{Disp}. However, rather than searching the text for any occurrence of the last few words, we simply take a weighted random walk through our probabilities graph. The code we discuss here is given above.
+
+First, we pick an $N$-tuple from the set tuples that follow the sentence-begin token. This gives us the first $N$ words of our sentence. For each $N$-gram, we pick a word known to follow with probability weighted by number of occurrences. Then, we shift the tuple to the right, knocking off the first word and appending the given word. We add our word to the sentence and repeat. Our sentence terminates either when there is no possible next word (possible if we gave the model a sentence not ending in punctuation), or the next word we have chosen is the sentence-end token. 
+
+\subsection{Examples}
+Heuristic testing showed that using bigrams produced the best results when generating random sentences. Unigrams tended to give nonsensical results while trigrams and above tended to quote sentences directly. Bigrams gave us a sort of uncanny valley where one would not believe the sentence was written by a human but also did not appear completely random. Here are some of our favorites as well as examples.
+\subsubsection{Hotel Review Corpus}
+We created four models from the hotel review corpus, and added sentences to each based on truthfulness and positivity.
+\begin{description}
+\item[Untruthful, Negative] \hfill
+\begin{verbatim}
+my stay was miserable .
+
+my wife used it to a suite with the girls continued 
+to have the anniversary of our stay .
+
+if you want a clean and quiet place to stay the night like i was 
+really excited about the incident outside he assured us that we 
+saw or had contact with me and my wife and i were planning our vacation .
+
+i stayed was quite surprised ; i could tell it was obvious to us 
+that she couldn't even include breakfast -- you had to wait for 
+almost an hour later ; it is not what i can say i will try out 
+other options ; we discovered the hair dryer ; curling iron ; etc .
+
+check - in to the pool ; and i watched as he threw our luggage 
+and personal belongings searched .
+\end{verbatim}
+
+\item[Truthful, Negative]\hfill
+\begin{verbatim}
+at 530 ; when available )... but our room comes with generous ; 
+ample bathroom ; itchy sheets ; no one was irish ; warm or hospitable !
+
+so she asked that the mini bar which we have luggage to carry too .
+
+the place being old and so unimpressive .
+
+having stayed all over the walls ; and i was so rude .
+
+i must not have been to bring our car to us .
+\end{verbatim}
+
+\item[Untruthful, Positive]\hfill
+\begin{verbatim}
+my favorite part was we could easily relax on my beach suit and 
+went down there and would definitely recommend the james 
+in chicago and glad to see .
+
+the bathroom and granite counter .
+
+everyone from check - in and got a call to the magnificent mile ;
+very orderly ; but even at the intercontinental is not as a 
+tourist who wants to be honest .
+ 
+there was decent ; nothing really stood out .
+
+after dinner we were able to go back to the university of chicago !
+\end{verbatim}
+
+\item[Truthful, Positive]
+\begin{verbatim}
+what a bargain for such a beautiful room ; ice delivered ; iron ; 
+hairdryer all top of being a great breakfast .
+
+we got an awesome deal through priceline and was immaculate and 
+a special dessert ) wow ... above and beyond what we expected .
+
+if you didn't sit inside the bar but many are near by .
+
+i had contacted the customer service here was absolutely perfect .
+
+the lobby ; large rooms ; which is very friendly people .
+\end{verbatim}
+\end{description}
+
+One thing we notice is that the positive reviews do sound positive and the negative reviews sound negative. We also see that semicolons tend to mark notable changes in source.
+
+\subsubsection{Bible Corpus}
+We again use bigrams. One immediately notices that the way of listing names (``and Judas, and Isaac, and Cain, and Mary...'') does not play well with the tendency to begin sentences with the word ``and''. We tried applying a trigram, but due to the density of names and the like in the corpus this almost always led either to direct quotes or two word sentences (``and saul''). Here are the results of using bigrams.
+
+\begin{verbatim}
+then there went certain , and hur , and laid wait in the place
+where he talked with him .
+
+then he found another man , and phut , and made him pass before samuel .
+
+and the sons of samuel came to pass by .
+
+and solomon went to her brother amnon ' s landmark .
+
+and the lord thy god is my strength and power : and there was war
+ between rehoboam and jeroboam all their days .
+
+the sons of kohath ; amram , izhar , hebron , and bare a son .
+
+and the children of korah died not .
+
+and samuel judged israel all the people of the tribe of zebulun ,
+gaddiel the son of hori .
+
+and the sons of eli were sons of eliab ; nemuel , and intreated the lord .
+
+cursed be he that removeth his neighbour ' s maid bare jacob the sixth ,
+ithream , by their generations , chief men .
+\end{verbatim}
+
+\section{Division of Labor}
+All code, research, and writing was done by Dominick Twitty (dkt36). Any references to ``we'' are used for formality. 
+
+\begin{thebibliography}{1}
+\bibitem{NLTK} The NLTK Library, 
+\verb|http://www.nltk.org/|
+\bibitem{Disp} The Dissociated Press Algorithm,
+\verb|http://en.wikipedia.org/wiki/Dissociated_press|
+\end{thebibliography}
+
+\end{document}
