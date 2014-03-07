@@ -1,0 +1,75 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{enumerate}
+\usepackage{mathtools}
+
+\newtheorem{claim}{Claim}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+
+\begin{document}
+\title{INFO 4220 Homework 2}
+\author{Dominick Twitty}
+\date{}
+\maketitle
+
+\section{Serial Dictatorship with Weak Preferences}
+We discuss the Pareto-efficiency and strategyproofness of mechanism $\phi$, which is a serial dictatorship with weak preferences. Formally, in the context of the house allocation problem, we say that if agent $a$ has a preference list $w \succ x = y \succ z$, then $a$ is indifferent between $x$ and $y$.
+\begin{claim}
+$\phi$ is not Pareto-efficient.
+\end{claim}
+\begin{proof}
+This proof is by counter-example. Consider agents $a$ and $b$, and houses $x$ and $y$. Here is a sample preference set:
+\begin{align*}
+\succ_a &: x = y\\
+\succ_b &: x \succ y
+\end{align*}
+
+Given that $phi$ uses an alphabetic priority order for agents and tie-breaking (an assumption we can make under the description of the algorithm), we have the matching $M = \{(a, x), (b, y)\}$. This is not Pareto-efficient. Consider the matching $M' = \{(a, y), (b, x)\}$. We have that $a$ is equally happy between $M$ and $M'$, and $b$ strictly prefers $M'$ to $M$. Therefore, $M'$ Pareto-dominates $M$, and $phi$ is not Pareto-efficient.
+\end{proof}
+
+\begin{claim}
+$\phi$ is strategyproof.
+\end{claim}
+\begin{proof} 
+We take advantage of the fact that $\phi$, like other serial dictatorships, is recursive, where every time we pair an agent and house, we remove them from the problem. That is, given an input tuple $(A, H, \succ)$ where $a \in A$ has highest priority, we have that $\phi(A, H, \succ) = \{(a, M(a)\} \cup \phi(A - \{a\}, H - \{M(a)\}, \succ - \{\succ_a\})$. 
+
+Based on this recursive property, we see that some agent $a$ cannot influence the decisions of any agents with higher priority. The only influence $a$ has on other agents is the ability to remove a house from the set that lower-preference agents can choose from. As these lower-preference agents cannot in turn influence $a$, we have that $a$ cannot gain a better position by influencing others. 
+
+This means that the only influence $a$ has on $M(a)$ is $\succ_a$. Therefore, presenting any preference list can only be as good or worse than presenting the true list. Therefore, $\phi$ is strategyproof.
+\end{proof}
+
+\section{A Good-Centric Algorithm}
+
+\begin{claim}
+$\phi$ is not strategyproof.
+\end{claim}
+\begin{proof}
+This proof is by counterexample. Consider students $a$, $b$, and $c$, with rooms $x$, $y$, and $z$. Here is an example (true) preference set:
+\begin{align*}
+\succ_a &: z \succ y \succ x\\
+\succ_b &: x \succ y \succ z\\
+\succ_c &: x \succ y \succ z
+\end{align*}
+We assume the priority order on both students and houses is alphabetical. $\phi$ will produce the matching $M = \{(b, x), (a, y), (c,z)\}$. Notice an instability: $a$ prefers $z$ over $y$ and $c$ prefers $y$ over $z$.
+
+Now consider the case where $c$ lies, presenting $\succ'_c : y \succ x \succ z$. $\phi$ will now produce the matching $M' = \{(b, x), (c, y), (a,z)\}$, as $\succ'_c$ claims dominance of $y$. We have then that $M'(c) \succ_c M(c)$. Because $c$ gained a strictly better position by altering the presented preferences, $\phi$ is not strategyproof. 
+\end{proof}
+
+We can use the same counterexample to show that $\phi$ is not Pareto-efficient.
+\begin{claim}
+$\phi$ is not Pareto-efficient. 
+\end{claim}
+\begin{proof}
+We use the same counterexample:
+\begin{align*}
+\succ_a &: z \succ y \succ x\\
+\succ_b &: x \succ y \succ z\\
+\succ_c &: x \succ y \succ z
+\end{align*}
+We assume the priority order on both students and houses is alphabetical. $\phi$ will produce the matching $M = \{(b, x), (a, y), (c,z)\}$. This matching is not Pareto-efficient. Consider the matching $M' = \{(b, x), (c, y), (a,z)\}$. From $M$ to $M'$, $b$ is equally happy, but both $a$ and $c$ are strictly happier. Therefore, $M'$ Pareto-dominates $M$, and $\phi$ is not Pareto-efficient.
+
+\end{proof}
+
+\end{document}

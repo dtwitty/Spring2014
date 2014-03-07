@@ -1,0 +1,257 @@
+\documentclass[12pt]{article}
+
+\usepackage{fullpage}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize\ttfamily,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=Python,                 % the language of the code
+  morekeywords={*,...},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+\begin{document}
+\title{CS 4740 Project 1: $N$-Gram Models\\
+Part 1}
+\author{Dominick Twitty (dkt36)}
+\maketitle
+
+\begin{abstract}
+Here we explore Markov language models through the use of $N$-grams. We present a method for classifying the truthfulness of hotel reviews using arbitray $N$-grams.
+\end{abstract}
+
+\section{Building the Model}
+First, we discuss the assumptions made in developing the model, then explore the details of its implementation.
+\subsection{Assumptions}
+The tokenization strategy we use likely has the greatest impact on the accuracy and usability of our model. We  made the following assumptions:
+\begin{itemize}
+\item Capitalization does not matter. That is, ``Cassandra'' and ``cassandra'' are considered equal. We make this assumption to simplify code. We also do not use capitalization as a sentence-begin marker.
+\item Punctuation marks are valid tokens. That is, (``there'', ``,'', ``by'') is considered a valid 3-gram from the sentence ``over there, by the pool.'' We believe this is a valid assumption to make, as punctuation marks play a role in the next possible word. 
+\item Text can be given to the model in discrete sentences. The model will mark sentence boundaries, and will consider $N$-grams that cross sentences. That is, (``there'', ``.'', ``where'') is a valid trigram.
+\end{itemize}
+
+We used the external NLTK library \cite{NLTK}for its sentence and punctuation tokenizers because they fit our assumptions and present us with an easy-to-use interface.
+
+\subsection{Implementation}
+Discounting implementation trivia such as preprocessing, regular expressions, and helper functions, we present the ``meat'' of our model in this section.
+
+\subsubsection{Tokenization and $N$-gram Generation}
+Given an arbitrary block of text, we tokenize it as such:
+\begin{lstlisting}
+def tokenize(text):
+    # remove compound words and set to lowercase
+    text = text.replace("\'", "").lower()
+    # break text into sentences
+	sentences = nltk.sent_tokenize(text)
+    # tokenize words and punctuation in each sentence
+    return [nltk.wordpunct_tokenize(s) for s in sentences]
+\end{lstlisting}
+
+We use a trivial class to represent special tokens such as sentence breaks. We chain sentences together with this break token and yield $N$-grams from the result. Work was put in to make this process lazy, as the rest of the program is already heavy on memory.
+
+\begin{lstlisting}
+sentence_break = SpecialToken("<sentence boundary>")
+
+def merge_sentences(sentences):
+	yield sentence_break
+	for s in sentences:
+		for i in s:
+			yield i
+		yield sentence_break
+
+def lazy_n_grams(n, gen):
+	n_gram = ()
+	for i in range(n):
+		n_gram = n_gram + (gen.next(),)
+	yield n_gram
+	for i in gen:
+		n_gram = n_gram[1:] + (i,)
+		yield n_gram
+\end{lstlisting}
+
+\subsubsection{Data structures}
+We made liberal use of Python's expressivity to build a model capable of supporting $N$-grams for arbitrary $N$. A common theme in this implementation is the idea that every $N$-gram is comprised of a \emph{word} and a \emph{history} of size $N - 1$. The main data structure we use to represent $N$-grams in this way is a dictionary that maps histories to word count maps. We refer to this dictionary as \verb|counts|. As an example, say we say the trigram (``dog'', ``ate'',  ``food'') one hundred times, and the trigram (``dog'', ``ate'', ``Claire'') once. Then, a subset of \verb|counts| would look like \verb|{('dog', 'ate') : {'food' : 100, 'claire' : 1}}|. This data structure gives us fast lookups for $N$-grams, as well as easily-accessed information about $(N - 1)$-grams.
+
+There are several other implementation details related to the kind of data we store and calculate, but here it suffices to say that certain things are calculated that make other algorithms more efficient. For example, we keep counts of average sentence length, number of unique $N$-grams and histories, the set of known tokens, the set of histories that start sentences, etc. Most of these are calculated after the model is \emph{frozen}. Freezing the model disallows any new training and ensures that data calculated at time of freezing remains valid.
+
+\subsubsection{Random Sentence Generation}
+In general, we generate random sentences by taking a random walk through our \verb|counts| dictionary. We begin by selecting a history that is known to start a sentence. Next, we use a weighted random distribution of the words associated with this history to select the next word. We add the word to the sentence, shift it into the history, and repeat the process until the next word is a sentence break. Given that at any point, (history, word) is a trigram we have already seen, we have that when $N > 1$, the sentence will always have a path to a sentence break token.
+
+There is a corner case when $N = 1$. The above algorithm will simply pick from the entire vocabulary of known tokens until the break token is found. This can lead to extremely long sentences. To fix this, we keep track of the average sentence length, $a$, and simply choose (with replacement) $a$ weighted random words from the vocabulary. The code is below:
+\begin{lstlisting}
+def random_sentence(self):
+	sentence = []
+	if (self.n == 1):
+		len_limit = self.sentence_len_sum / self.num_sentences
+		for i in xrange(len_limit):
+			word = weighted_random(self.counts[()])					
+			if word == sentence_break: continue
+			sentence.append(word)
+	else:
+		# pick a sentence start by weighted random
+		start_weights = {i:sum(self.counts[i].values()) for i in self.starts}
+		n_gram = weighted_random(start_weights)
+		sentence.extend(n_gram[1:])
+		# keep choosing new words until a sentence break
+		next_word = weighted_random(self.counts[n_gram])
+		while next_word != sentence_break:
+			sentence.append(next_word)
+			# shift the new word into the next history
+			n_gram = n_gram[1:] + (next_word,)
+			next_word = weighted_random(self.counts[n_gram])
+	return " ".join(sentence)
+\end{lstlisting}
+
+\subsubsection{Smoothing and Unknown Words}
+We implemented Good-Turing Smoothing to deal with both unseen $N$-grams as well as words not in the training vocabulary. Our approach for handling unknown words is simple. Intuitively, we assign unknown words the \verb|<UNK>| token. However, we never actually need to implement this token, as we can abstract it away mathematically. 
+
+First, we have that any $N$-gram containing an unknown word cannot possibly be in our database. Therefore, we apply the same logic that we would to an unseen $N$-gram containing only no words. We use the standard Good-Turing smoothing strategy, but we mathematically estimate the number of possible $N$-grams. We have that $N_0$, the set of $N$-grams with 0 occurrences, is equal to $(V + 1)^N$ where $V$ is the size of the vocabulary. Every position in the $N$-gram can either be a known or unknown word, and there are $N$ possible positions for it to be in. Let $C^*$ be the adjusted counting function. We apply the same logic for unknown histories, letting $N_0 =  (V + 1) ^{(N - 1)}$, as each history is really an $(N - 1)$-gram. Then we have our probability:
+\[P^*(w_n | w_1, \ldots, w_{n - 1}) = \frac{C^*(w_1, \ldots, w_n)}{C^*(w_1, \ldots, w_{n - 1})}\]
+
+Here we have the code for Good-Turing counts for $N$-grams. Because of similarity, we don't include the same for histories. Notice that we treat $N$-grams with only one occurrence the same as those with zero occurrences. We also switch to regular MLE when there are greater than five occurrences of an $N$-gram. These numbers are tuned constants.
+\begin{lstlisting}
+def GT_gram_count(self, n_gram):
+	history, word = n_gram[:-1], n_gram[-1]
+	# get occurence count of this n gram
+	c = 0
+	if history in self.counts:
+		if word in self.counts[history]:
+			c = self.counts[history][word]
+	cp = c
+	# only run GT on 'untrustworthy' grams (low count)
+	if c < 2:
+		num_c_0 = self.possible_grams()
+		num_c_1 = self.gram_counts[1]
+		cp = float(num_c_1) / float(num_c_0)
+	elif c < 5:
+		# we can only run GT if we have info on higher counts
+		if c + 1 in self.gram_counts:
+			num_c = self.gram_counts[c]
+			num_c_1 = self.gram_counts[c + 1]
+			cp = (c + 1) * float(num_c_1) / float(num_c)
+	return cp
+\end{lstlisting}
+
+\subsubsection{Perplexity}
+Our perplexity calculation isn't particularly interesting. We use our Good-Turing counts to get the probability of each $N$-gram, and apply the usual formula. We do, however, take care to avoid floating point error by taking roots before multiplication rather than after.
+\begin{lstlisting}
+def perplexity(self, tokens):
+	# tokens may be lazily generated, so we don't know N yet
+	N = self.n
+	PPs = []
+	for n_gram in lazy_n_grams(self.n, tokens):
+		PPs.append(1.0 / self.GT_prob(n_gram))
+		N += 1
+	PP = 1
+	for p in PPs:
+		PP *= p ** (1.0 / N)
+	return PP
+\end{lstlisting}
+
+\subsubsection{False Review Detection}
+We first trained a classifier for true reviews and one for false reviews. For each review we test, we compare its perplexity within each model, and assign it to the model with the least perplexity. The code is somewhat trivial. The models were trained from the training set and validated using the validation set and Kaggle. The objective function is the ratio of correct and incorrect classifications.
+
+\subsection{Extensions}
+As mentioned earlier, the extension we undertook was building a model that could use arbitrary $N$-grams. We already touched on the implementation (histories and words), so we now discuss the possibilities an arbitrary $N$-gram model opens to us. Due to time constraints, some of these were pursued and dropped. Firstly, we see that changing a single line of code can drastically change the workings and accuracy of the model with minimal work by the user. Secondly, we have an interesting recursive structure. One can perform back-off and interpolation with relative ease when every $N$-gram model also has a subordinate $(N - 1)$-gram model.
+
+Perhaps most useful given our assumptions is the fact that longer $N$-grams can transition between sentences. Given a bigram model, every $N$-gram at a sentence boundary will include a period or a sentence break token (or both). The same goes for clauses separated by commas. This provides little information. However, given a trigram, one can turn (``end'', ``.'') and (``.'', ``begin'') into (``end'', ``.'', ``begin''). We now have information from both sides of the period, as well as the information the bigrams give us.
+
+We found that under our assumptions, the switch from bigrams to trigrams increased accuracy of validation and believability of randomly generated sentences.
+
+\section{Results and Observations}
+Here we present the strengths and weaknesses of our model, the justification behind them, and possible changes that could be made to improve results.
+
+\subsection{Randomly Generated Sentences}
+First, we present a few randomly generated sentences from the King James Bible Corpus. Note how the unigrams are incomprehensible, while the trigrams have strings of comprehensible text. Also note the  use of ``and'' as both a sentence starter and list continuation device.
+\begin{description}
+\item[Unigrams]\hfill\\
+with not , served bathe thou doth greatest thee of all the for lord came . all shall thou . be people the life
+\\
+blood gold by father and for any the again behold said he over thee the as put clothes and son , , , sword thy
+\item[Bigrams]\hfill\\
+and the lord said , and his mother , whose name ?
+\\
+and zebulun , and with milk and of the head of the lord was missed , saying , unto the golden earrings , the children of zerah , where , i will give us out of the tribes of the sweet incense before the congregation of the ark of the second time , said , and for you.
+\item[Trigrams]\hfill\\
+him that sent you , ye shall answer and say unto thee , and jezer , the sister of tahpenes the queen of sheba all her vows , and on the altar upon the one for a sweet savour : all the cities of israel.
+\\
+and saul said unto him , i pray thee , a little coat , a man , and said unto the sanctuary , and , behold , here i am the lord by the hand of any good thing toward the ringstraked , speckled , and believe thee , after he begat terah an hundred and twenty servants .
+\end{description}
+
+We also present randomly generated sentences from the hotel review training dataset. We found the trigram sentences just close enough to correct English to be comical. Among both truthful and untruthful reviews, we generate:
+\begin{description}
+\item[bigrams]\hfill\\
+good start to modified engine and then did not charging me for a / do not honor the orange juice )-- something to my wife and very convenient especially considering the palmer house!
+\\
+you get removed ( some great price ) and look the staff that if youre steps from past decade and overall i love this " thats right on and we both towel racks fell off wall paper.
+\item[trigrams]\hfill\\
+when my sister got married in the shower was terrible ; the rooms were very rude and maid who serviced our room and at first.
+\\
+seemed like they like it had far too much noise from the window overlooked the river ; but i definitely will make anything you would want.
+\end{description}
+
+\subsection{Perplexities}
+We provide a few examples of perplexities from both the Bible and Review corpora. We first take a few verses from the Bible test set and compare their complexities to sentences we made up. We use trigrams.
+\begin{itemize}
+\item ``But when he saw many of the Pharisees and Sadducees come to his
+baptism, he said unto them, O generation of vipers, who hath warned
+you to flee from the wrath to come?'' : Perplexity 8965
+
+\item ``And the lord doth spake, judas, would i not look fly in that top? would not anyone in this presence deserve tacos?'' : Perplexity 17302
+			
+\item ``Therefore all things
+whatsoever ye would that men should do to you, do ye even so to them:
+for this is the law and the prophets.'' : Perplexity 9162
+\end{itemize}
+
+We also compare perplexities from our truthful review model to truthful and untruthful reviews from the validation set (using trigrams):
+\begin{itemize}
+\item ``I stayed at the Hilton Chicago for my cousins wedding. The service was impeccable. Not only was the staff attentive; they were respectful and careful not to interrupt the guests or make themselves known when serving dinner. I had the chicken wellington and it was to die for! The chicken was perfect and moist but the pastry crust was flaky and crispy. They even had Pakistani dinner options for some of the guests. The amenities were great; and after an open bar the night before; the Mimosas and brunch buffet couldn't have been better! I would love to have my wedding there.'' : Untruthful, Perplexity 7926
+
+\item ``My wife and I stayed here in the middle of February 2005. We took the (EL) subway to the hotel from O'Hare. It was very convenient. The lobby was nice and the room was clean and comfortable. I've stayed in many a hotel room; this bed was the most comfortable I've ever slept in. The hotel is located in a great area and close to everything. Walking distance to almost all the interesting sites Chicago has. Would definetly recommend this hotel to anyone visiting this great city.'' : Truthful, Perplexity 1204
+\end{itemize}
+
+\subsection{Review Truthfulness}
+The model attained average performance classifying Hotel reviews. We use the validation set as we ourselves do not know the truthfulness of the test set. Using trigrams on the review validation set, with 280 reviews, we found 20 false positives, 75 false negatives, 45 true positives, and 140 true negatives for a total of 185 correct and 95 incorrect. We noticed a strong leaning towards classifying reviews as negative. Kaggle gave our model a score of 0.5833.
+
+\section{Conclusion and Future Work}
+We decided that our model performance is decidely underwhelming. Our current thoughts on this relate to the assumptions we make, such as our tokenization strategy, choice of $N$, and constants such as Good-Turing cutoff. We also do not discount the possibility of bugs in the code. 
+
+In future, this model could be extended with different smoothing methods, more heuristics, and of course more data. More training and validation sets couldn't hurt. Despite its downsides, we believe this model is a solid base for any future work.
+
+
+
+\section{Division of Labor}
+All code, research, and writing was done by Dominick Twitty (dkt36). Any references to ``we'' are used for formality. 
+
+\begin{thebibliography}{1}
+\bibitem{NLTK} The NLTK Library, 
+\verb|http://www.nltk.org/|
+\end{thebibliography}
+
+\end{document}

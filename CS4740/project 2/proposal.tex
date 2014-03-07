@@ -1,0 +1,35 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\begin{document}
+\title{CS 4740 Project 2 Proposal}
+\author{Dominick Twitty \\ \texttt{dkt36}
+\and
+Emily Lutz \\ \texttt{eel52}
+\and
+Harrison Davis \\ \texttt{hmd38}
+\and
+Madison Butzbach \\ \texttt{mmb289}}
+\date{}
+\maketitle
+Described below is a proposal for the implementation of a Word Sense Disambiguation (WSD) system. We propose features we will pull from word contexts in order to build a supervised WSD model. We also propose a method for deciding relevant context words for use in a dictionary-based WSD model. Finally, we explain our initial implementation thoughts.
+
+\section{Supervised WSD Features}
+The features we will glean from word contexts include
+\begin{description}
+\item[Co-occurrence Windows] A feature is the set of words and symbols (tokens) within some $n$ token distance of the target word. This model can account for information like the word ``music'' or ``fishing'' being within a certain distance of the word ``bass''. Accounting for numbers and symbols will give us information such as how proximity to a dollar sign usually implies the ``money'' sense of the word ``share''.
+\item[Co-location Windows] A feature is a set of $(w, i)$ where $w$ is a token and $i$ is the position of that token relative to the target word. Again, we only consider tokens in a window of size $n$. This model accounts for information like relative position, like how ``sea'' almost always comes right before ``bass'', but ``guitar'' almost always comes right after.
+\item[$N$-grams] A feature could be the set of $N$-grams from the context that contain the target word. This is a less general version of the previous two models, though it could potentially give more concrete results. For example, if the bigram (``bass'', ``fishing'') appears, we are almost certainly dealing with a fish.
+\item[Part-of-speech Tags] A feature is again a set of $(p, i)$ where $p$ is now a part-of-speech tag rather than a token. Initial research suggests that this avenue is worth exploring, and NLTK can provide the tagging facilities. POS tagging will not only give us information on the target word's likely POS (according to our tagger), but also give us POS context. For example, in English, nouns usually follow adjectives instead of the converse.
+\end{description}
+
+These features could all possibly be improved by using word stems and lemmas (which NLTK can provide), and by not considering non-content words (``a'', ``the'', etc). Window sizes will be chosen based on performance. The implementation of these models will be based on the Naive-Bayes process given. If necessary, we will implement Good-Turing smoothing to deal with outliers.
+
+\section{Dictionary-Based WSD}
+Our dictionary-based model will use a modification of the Lesk algorithm where the overlap of a sense definition with a context is defined to be some function of definitions of the words in the context. Naturally, choosing relevant words from the sentence context is crucial. Our plan for doing this is to first filter out words from the context that are not in the dictionary. Second, we may lemmatize the words in the context. Finally, we will set boundaries on where the context starts and ends. These boundaries may be at the sentence level, the phrase level, or within a certain number of tokens.
+
+Our plan is to develop an algorithm, given these context words, for scoring overlap between context definition and sense definitions. Current thoughts range from set intersections to 1-dimensional clustering based on the index of context and dictionary overlaps. The chosen word sense will be the one with the highest overlap score.
+
+\section{Implementation Schedule}
+Our plan is to use Python and NLTK for the superior expressivity of the language. Parsing, feature generation, and necessary data structures will likely be finished quickly, leaving ample time for the generation of algorithms. Once the algorithms are in place, verification and tuning will begin.
+
+\end{document}
