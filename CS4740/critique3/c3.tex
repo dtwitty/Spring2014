@@ -1,0 +1,19 @@
+\documentclass[12pt]{scrartcl}
+\usepackage{fullpage}
+\setkomafont{disposition}{\normalfont\bfseries}
+\begin{document}
+\title{CS 4740 Critique 3}
+\subtitle{``Paraphrasing with Bilingual Parallel Corpora''}
+\author{Paper by C. Bannard and C. Callison-Burch \\
+Critique by Dominick Twitty \texttt{(dkt36)}}
+\date{}
+\maketitle
+
+My concern with the method presented in this paper is its usefulness in real-world applications. To me, it is more useful to detect whether two documents paraphrase each other rather than generate paraphrases of one phrase. That isn't to say that this paper is of no research value, however. One could see the extracted paraphrases in the results section as glorified thesaurus entries, but a key difference is that a system like this can identify things such as idioms, which have a colloquial meaning different from their literal meaning. For example, the system correctly chose both ``approval'' as a synonym of ``green light''. These kinds of paraphrases could be useful in applications such as word-sense disambiguation and sentiment analysis, where it important to understand the true meaning of a context rather than its literal meaning.
+
+One thing I do question is the scalability and long-term improvement of this method. The authors state that manual alignments produce very good results, the method improves with the accuracy of the alignment tool. This means that, in its current form, the method is bounded by the accuracy of other methods. In fact, this method relies on lots of manually-created source material, such as parallel corpora and word sense controls. 
+
+At least in its current form, I don't see this method extending to whole-document paraphrasing or sentiment analysis. The model seems far too tied to its training data to do any kind of extrapolation, let alone generation. That is, right now it can only produce paraphrases of phrases in its training data, and can only emit paraphrases it has already seen. However, I could see this system being used as a sub-problem in a more advanced system. Especially the idiom demystification discussed earlier would be useful in reducing a document to its most unambiguous form.
+
+All this said, I see nothing wrong with the methodology of the paper. I think it was very prudent of the authors to include hand-tuned alignments to show the performance of their algorithm under ideal circumstances, else it would have been easy to dismiss their results from automatic tuning as too low. Though it would have been extremely laborious, I would like to see how the model performs with hand-aligned sentences and multiple corpora.
+\end{document}

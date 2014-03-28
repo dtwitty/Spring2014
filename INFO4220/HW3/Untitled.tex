@@ -1,0 +1,20 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\newtheorem{theorem}{Theorem}
+\begin{document}
+\begin{theorem}
+There are infinitely many primes.
+\end{theorem}
+\begin{proof}
+This proof is by contradiction. Suppose there are a finite number of primes $p_1,\ldots,p_n$. We construct a new number $m$ as
+\[ m = 1 + \prod_{i = 1}^n p_i\]
+We see that for all primes $p_i$, $m \mod p_i = 1$. Therefore no prime $p_i$ divides $m$. Therefore, $m$ must be prime, and by contradiction the number of primes is infinite.
+\end{proof}
+
+
+
+\end{document}

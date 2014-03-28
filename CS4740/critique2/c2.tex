@@ -1,0 +1,21 @@
+\documentclass[12pt]{scrartcl}
+\usepackage{fullpage}
+\setkomafont{disposition}{\normalfont\bfseries}
+\begin{document}
+\title{CS 4740 Critique 2}
+\subtitle{``Corpus-based and Knowledge-based Measures of Text Semantic Similarity''}
+\author{Paper by C. Corley, R. Mihalcea, and C. Strapparava \\
+Critique by Dominick Twitty \texttt{(dkt36)}}
+\date{}
+\maketitle
+
+Firstly, I note that the paper is very well written, and I feel that I would be able to replicate most of their experiments from the information given. This is in contrast to, say, the previous paper on Twitter analysis, which threw equations at the reader without the context of how they fit together. However, the authors speak of combining several metrics in their results section, and I am confused as to whether the combined results given are the result of some statistical function or an actual algorithm for combining the results from each metric to produce a new boolean answer.
+
+In terms of the algorithms used, however, I would have liked to see more text similarity algorithms compared to the large number (8!) of word similarity metrics. For example, what about a metric that takes into account word orderings? What about distance between matches? Surely there is room to expand, and the authors do note that there is room for improvement. In terms of word-to-word similarity, however, they do seem to have their bases covered, and I like that their algorithm is essentially plug-and-play regarding any per-word similarity metric.
+
+The authors note that the inspiration for this approach came from vectorial information retrieval models. Obviously, the approach presented in the paper could be applied in the reverse direction, to information retrieval, the thought being that one searches each document for semantically similar text to the search query. Another application that comes to mind would be plagiarism detection. As many a high-school and college student will refuse to admit to, one of the most common forms of plagiarism is to copy a section of text and change a few words or phrases until it ``looks'' different yet says the same thing.
+
+From the results given, the method presented seems mature (performant enough) for real-world use, though I question certain things like algorithmic efficiency and robustness. For instance, the algorithms given all appear to assume all words, definitions, shortest paths in WordNet, etc are already known. I'd like to see more about preprocessing, caching, and outlier handling before I'm convinced that these 8 models can be implemented to handle any application beyond research. For instance, can it really hold up to, say, a search engine?
+
+
+\end{document}

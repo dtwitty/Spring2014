@@ -1,0 +1,219 @@
+\documentclass[10pt,landscape]{article}
+\usepackage{multicol}
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage[landscape]{geometry}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{color,graphicx,overpic}
+\usepackage{hyperref}
+\usepackage{algorithmicx, algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{enumitem}
+\setlist{nolistsep}
+\setdescription{leftmargin=\parindent,labelindent=0.5cm}
+\newcommand*\Let[2]{\State #1 $\gets$ #2}
+
+\setlength{\textfloatsep}{0pt}
+
+\setlength{\intextsep}{0pt}
+\ifthenelse{\lengthtest { \paperwidth = 11in}}
+    { \geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }
+    {\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
+        {\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+        {\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+    }
+
+% Turn off header and footer
+\pagestyle{empty}
+
+% Redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x
+                                {\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1explus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
+\makeatother
+
+\setcounter{secnumdepth}{0}
+
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+
+\begin{document}
+\raggedright
+\footnotesize
+
+\begin{multicols*}{3}
+
+
+% multicol parameters
+% These lengths are set only within the two main columns
+%\setlength{\columnseprule}{0.25pt}
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{1pt}
+\setlength{\columnsep}{2pt}
+
+\section{Binary Preferences}
+Simplest market\\
+Agents specify if object is acceptable\\
+Binary room allocation, timeslots, \ldots\\
+Modeled as bipartite graph of agents and objects\\
+Ideal allocation: perfect matching\\
+Good allocation: maximum matching
+
+\subsection{Bipartite Matching}
+\textbf{Constricted Set} $S$: $|S| > |N(S)|$\\
+\textbf{Matching Thm:} No perfect matching $\iff$ constricted set\\
+\textbf{Alternating Path:} Alternates between matched and unmatched edges\\
+\textbf{Augmenting Path:} Alternating path with unmatched endpoints
+\begin{algorithm}[H]
+  \caption{Alternating BFS}
+  \begin{algorithmic}
+	\Let{$u$}{unmatched node on RHS}
+	\For{$n$ in BFS($u$)}
+	    \If{$n$ in RHS}
+	        \State Add unmatched edges to queue
+	    \Else
+	        \State Add matched edges to queue
+	    \EndIf
+    \EndFor
+    \State Augmenting path if unmatched LHS node 
+  \end{algorithmic}
+\end{algorithm}
+
+\section{Rank-order Preferences}
+Agents give ranking of acceptable options\\
+Housing allocation, etc\\
+Agent $a$ has preferences $\succ_a$\\
+\textbf{Matching:} $M : A \rightarrow H$, $M(a)$ is house given to $a$\\
+\textbf{Mechanism:} Algorithm that takes $(A, H, \succ)$ as input and returns a matching $M$
+
+\subsection{Pareto-efficiency}
+A matching $\hat{M}$ \textbf{Pareto-dominates} $M$ if
+\begin{itemize}
+\item $\hat{M}(a) \succeq_a M(a) \forall a \in A$
+\item $\hat{M}(b) \succ_b M(b)$ for some $b \in A$
+\end{itemize}
+A matching $M$ is \textbf{Pareto-efficient} if there is no other matching $\hat{M}$ that Pareto-dominates it.\\
+A mechanism $\phi$ is Pareto-efficient if $\phi(\succ)$ is Pareto-efficient for every  preference profile $\succ$.
+
+\subsection{Serial Dictatorship}
+Consider agents in order, for each give highest choice not already taken.\\
+SD is Pareto-efficient given strict preferences.\\
+\textbf{Strategyproof:} No agent can benefit by lying about preferences, regardless of preferences of other agents\\
+SD is strategyproof\\
+Works for incomplete preferences, may produce small matching.
+
+\subsection{Initial Endowments}
+Agents already own objects\\
+\textbf{Individual Rationality:} No agent can do strictly better by not participating.\\
+A matching $M$ is in the \textbf{core} if there is no coalition of agents $C \subseteq A$ and matching $\hat{M}$ such that
+\begin{itemize}
+\item For any $a \in C$, $\hat{M}(a)$ is the initial house of some $a' \in C$
+\item $\hat{M}(a) \succeq_a M(a)$ for all $a \ in C$ and $\hat{M}(b) \succ_a M(b)$ for some $b \in C$
+\end{itemize}
+Intuitively, no coalition can benefit by trading amongst themselves.\\
+\textbf{Thm:} there exists a core matching for any housing market with strict preferences\\
+
+\subsection{TTC Algorithm}
+Setup:
+\begin{itemize}
+\item $p_k = (a_k, h_k)$: Pair of agent $k$ and her initial endowment $h$
+\item $P$: (Running) set of pairs $p_k$
+\item Directed graph $G(p)$: Directed edge from $p_i$ to $p_j$ if $h_j$ is top choice of $a_i$ among items in $P$.
+\end{itemize}
+\textbf{Lemma:} if $P$ is non-empty, there exists at least one cycle in $P$, and no two cycles intersect.
+\begin{algorithm}[H]
+  \caption{TTC Algorithm}
+  \begin{algorithmic}
+	\State Initialize $P$ to be the set of all agent-item pairs in the market
+	\While{$P$ not empty}
+        \State Create graph $G(P)$
+        \State Assign all cycle agents their top choice
+        \State Remove all pairs in each cycle from $P$
+    \EndWhile
+  \end{algorithmic}
+\end{algorithm}
+\textbf{Thm:} TTC matching is unique core matching\\
+\textbf{Thm:} TTC mechanism is strategyproof\\
+\textbf{Thm:} Core mechanism is the only mechanism that is IR, PE, and SP for a housing market
+
+\section{Initial Endowments and Trade}
+\textbf{Competitive Equilibrium} in markets with money:\
+\begin{itemize}
+\item Agent $i$'s utility for item $j$ is $v_{ij}$, price $p_j$
+\item Price-allocation pair with $v_{ij} \geq p_j$ if $i$ is assigned $j$; each agent recieves item maximizing $v_{ij} - p_j$ over all $j$.
+\end{itemize}
+Price, allocation pair $(p, M)$ is CE if for all agents
+\begin{itemize}
+\item Budget Constraint: $p_{M(a)} \leq p_{h(a)}$
+\item Utility Maximization: $M(a) \succeq_a h$ for all $h \in H$ with $p_h \leq p_{h_a}$
+\end{itemize}
+\textbf{Thm:} core matching is sustainable by a CE
+
+\subsection{Markets with mixes Initial Endowments}
+\textbf{You-request-my-house-i-get-your-turn:} SD + TTC\\
+\begin{itemize}
+\item Choose priority ordering amongst agents
+\item Assign current top choice among remaining items until agent requests initial item of as-yet unassigned agent
+\item Insert this existing tenant before the requesting agent in the priority order, continue from start.
+\item If any cycles form, remove agents by assigning along cycle.
+\end{itemize}
+\textbf{Thm:} YRMHIGYT mechanism is IR, PE, SP
+
+\subsection{Kidney Exchange}
+Donor-recipient pairs: donor in each pair gives kidney to other pair's recipient\\
+Special case of MIE market:
+\begin{description}
+\item[Patient with donor:] agent with initial house
+\item[Donor:] initially occupied house
+\item[Kidney from waitlist:] vacant house
+\item[Patient without live donor:] newcomer
+\item[Altruistic donor:] vacant house
+\end{description}
+
+\section{Two-sided Preferences}
+Both sides have preference list for other side\\
+Marriage model, etc\\
+\textbf{Blocking Pair:} $m$ and $w$ block matching if they prefer each other to current partner.\\
+\textbf{Stable Matching:} All pairings are acceptable to both members, no blocking pairs
+\begin{algorithm}[H]
+\caption{Deferred Acceptance (Gale-Shapley}
+In each round:
+\begin{itemize}
+\item Each free man proposes to the top-ranked acceptable woman who has not rejected him yet
+\item Each woman chooses among her current partner and the best acceptable proposal from the current round
+\item Woman is partnered with chosen man (if he exists), rejected men become free
+\end{itemize}
+\end{algorithm}
+\textbf{Thm:} DA Algo always returns stable matching given strict preferences.
+
+\subsection{Comparing Matchings}
+Given any two matchings $\mu$ and $\mu'$:
+\begin{itemize}
+\item $\mu \geq_m \mu'$ if $m$ (weakly) prefers his partner in $\mu$ to $\mu'$
+\item $\mu \succeq_M \mu'$ if all men prefer $\mu$ to $\mu'$
+\end{itemize}
+Cannot make generalizations:
+\begin{itemize}
+\item Any single agent can compare matchings
+\item Not all agents on a side need agree
+\item All men agreeing does not imply all women agree (ex. $m_i$ has top choice $w_i$, all women prefer $m_1$)
+\end{itemize}
+\textbf{Thm:} There exists a man-optimal stable matching that every man weakly prefers to every other stable matching.\\
+\textbf{Thm:} Man-proposing DA algo returns man-optimal matching\\
+\textbf{Thm:} $\mu \succeq_M \mu' \iff \mu' \succeq_M \mu$\\
+\textbf{Coollary:} Man-optimal is women-pessimal
+
+\end{multicols*}
+\end{document}

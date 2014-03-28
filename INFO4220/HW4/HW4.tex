@@ -1,0 +1,72 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{enumerate}
+\usepackage{mathtools}
+
+
+\newtheorem*{claim}{Claim}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{definition}{Definition}
+\begin{document}
+\title{INFO 4220 Homework 4}
+\author{Dominick Twitty}
+\date{}
+\maketitle
+\section{Corner Cases in Stable Matchings}
+\begin{claim}
+In a marriage model, some man $m$ and some woman $w$ have each other at the top of their preference lists. Every stable matching contains $(m, w)$.
+\end{claim}
+\begin{proof}
+Consider a matching $M$ that does not contain $(m, w)$. Necessarily, $M$ contains $(m, x)$ and $(y, w)$. We see that as $m$ and $w$ have each other on the top of their preference lists, $m$ prefers $w$ over $x$ and $w$ prefers $m$ over $y$. Therefore $M$ is not stable. Therefore, if $(m, w)$ is not in $M$ then $M$ is not stable, which by contraposition says that if $M$ is stable, then $M$ contains $(m, w)$.
+\end{proof}
+
+\begin{claim}
+Consider a marriage model with strict, complete preference lists. Suppose there is some man $m$ and some woman $n$ who have each other on the bottom of their preference lists. There exist stable matchings that contain $(m, w)$.
+\end{claim}
+\begin{proof}
+We construct an example of such a scenario. Consider two men $m_i$ and two women $w_i$ with the following preference lists:
+\begin{align*}
+m_1 &: w_1 \succ w_2 & w_1 &: m_1 \succ m_2\\
+m_2 &: w_1 \succ w_2 & w_2 &: m_1 \succ m_2
+\end{align*}
+We propose the matching $M = \{(m_1, w_1), (m_2, w_2)\}$. We see that no man and woman prefer each other over their current mate. Therefore, $M$ is stable. Furthermore, we see that $m_2$ and $w_2$ are on the bottom of each other's preference lists. We have therefore constructed an instance that verifies our claim.
+\end{proof}
+
+\section{Stable Matchings given Incomplete Preferences}
+Consider a version of the marriage model wherein men and women (which may be of a different number) can put forth incomplete preference lists. It was shown in class that the deferred-acceptance algorithm will produce a stable matching given this situation. We remember that the new definition of ``stable'' is that a matching must not contain any blocking pairs (no man and woman prefer each other to their match, where they might be matched to themselves), and must be individually rational (every match is acceptable to both parties).
+\begin{claim}
+Consider the bipartite graph $G$ representing the set of acceptable marriages. A matching $M$ being stable does not imply that $M$ is maximum-size.
+\end{claim}
+\begin{proof}
+We construct an example of a marriage model and a matching $M$ that is stable but not maximum-size.
+Consider the following preference lists among women $w_i$ and men $m_i$.
+\begin{align*}
+m_1 &: w_2 \succ w_1 \succ m_1 & w_1 &: m_1 \succ w_1\\
+m_2 &: w_3 \succ w_2 \succ m_2 & w_2 &: m_1 \succ m_2 \succ w_2\\
+m_3 &: w_3 \succ m_3           & w_3 &: m_2 \succ m_3 \succ w_3
+\end{align*}
+We propose the matching $M = \{(m_1, w_2), (m_2, w_3), (w_1, w_1), (m_3, m_3)\}$, which has size 2 (edges). First, we see that $M$ is not a maximum-size matching, as there exists an augmenting path $P = (w_1, m_1, w_2, m_2, w_3, m_3)$. However, we do see that $M$ is stable. We have that $m_1$ and $w_2$ prefer each other most, as is the case with $m_2$ and $w_3$. Therefore, no blocking pair can contain any of those four. This leaves the only other pair $m_3$ and $w_1$. They are not compatible, and are therefore not a blocking pair. Therefore, $M$ is stable, but not maximum-size, and we have constructed an instance that verifies our claim.
+\end{proof}
+
+\begin{claim}
+There does not always exist a maximum-size matching which is stable.
+\end{claim}
+\begin{proof}
+Look to the example given in the previous claim. In this example, we see the only maximum-size matching is $\{(m_1, w_1), (m_2, w_2), (m_3, w_3)\}$. However, this matching is unstable, as $m_1$ and $w_2$ form a blocking pair. Therefore, there does not always exist a maximum-size matching which is stable.
+\end{proof}
+
+\begin{claim}
+Every stable matching is also a maximal matching.
+\end{claim}
+\begin{proof}
+We prove the contrapositive, that is, if a matching $M$ is not maximal, then $M$ is not stable. In a non-maximal matching, there must exist some edge $e = (m, w)$ not in $M$ with $M' = M \cup \{e\}$ is still a matching. This implies neither $m$ nor $w$ is matched. As there is an edge between them, $m$ and $w$ must be compatible (by the construction of our graph), and therefore on other's preference list. Implicitly, $m \succ_w w$ and $w \succ_m m$, so $m$ prefers $w$ over no marriage, and $w$ prefers $m$ over no marriage. Therefore, $(m, w)$ is a blocking pair. As $M$ contains a blocking pair, $M$ is not stable. By contraposition, we have shown that if a matching is stable, it must also be maximal.
+\end{proof}
+
+
+
+
+
+
+\end{document}
