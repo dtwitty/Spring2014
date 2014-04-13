@@ -1,0 +1,56 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage{multicol}
+
+
+\newtheorem*{claim}{Claim}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{definition}{Definition}
+\begin{document}
+\title{INFO 4220 Blog Post 1:\\ Applying a Graph-Based Model to Sports Rating}
+\author{Dominick Twitty}
+\date{}
+\maketitle
+
+The 2014 Mathematical Contest in Modeling asked participants to choose the greatest college sports coaches of all time. We applied concepts from Networks 1, namely the stable probability distribution on a directed graph produced by PageRank, to answer this question. The ideas are simple - one can easily find flaws in the naive metrics used to rate coaches: win percentage, number of wins, wins minus losses, etc. We wanted to develop a model that not only rewarded high wins and low losses, but also took into account the interactions between coaches. For example, if one coach consistently defeats every other team in his division save for one, the team that defeats him should transitively receive credit for beating those other teams. 
+
+The coach ranking problem maps onto PageRank quite well. Given the set of games played between a pair of coaches over their careers, one manipulates the direction and weight of the edge between them. Close games do not change the weight by much, but large point margins do. We consider the edge between coaches to point to the superior coach. If we were to give each coach some ``winning potential'', which transfers to another coach upon a loss, we are interested in seeing how the winningness stabilizes. This is exactly the problem that the PageRank algorithm solves. We retain the property that a high number of wins is beneficial, as are low losses, but we gain the property that defeating a powerful coach gives you more potential than defeating a nobody.
+
+This model does in fact produce believable results given real world data. We collected data for every NCAA Basketball tournament game and Football Bowl game and produced coach graphs from them. The Basketball graph had 763 coaches and 2582 edges. The Football graph had 529 coaches and 1032 edges. Here are the top coaches as picked by our model:
+
+\begin{table}[!htb]
+\begin{minipage}{.5\linewidth}
+\centering
+\begin{tabular}{ | c | c | }
+\hline
+Coach Name   & Vote \% \\\hline
+Joe Paterno  & 0.02421 \\\hline
+Mack Brown   & 0.01728 \\\hline
+Bear Bryant  & 0.01663 \\\hline
+Lloyd Carr   & 0.01491 \\\hline
+Pete Carroll & 0.01338 \\
+\hline
+\end{tabular}
+\caption{Football}
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+\centering
+\begin{tabular}{ | c | c | }
+\hline
+Coach Name  & Vote \% \\\hline
+Mike Krzyzewski & 0.03272 \\\hline
+Dean Smith  & 0.02544 \\\hline
+Roy Williams & 0.02329 \\\hline
+John Wooden  & 0.02170 \\\hline
+Rick Pitino  & 0.02066 \\
+\hline
+\end{tabular}
+\caption{BasketBall}
+\end{minipage}
+\end{table}
+
+\end{document}

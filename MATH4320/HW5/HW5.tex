@@ -1,0 +1,144 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage{multicol}
+\usepackage{nicefrac}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\usepackage{float}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{claim}{claim}
+\newtheorem*{lemma*}{Lemma}
+\newtheorem*{theorem*}{Theorem}
+\newtheorem*{claim*}{Claim}
+\usepackage{subcaption}
+
+\newcommand*{\Real}{\mathbb{R}}
+\newcommand*{\Z}{\mathbb{Z}}
+\newcommand*{\Q}{\mathbb{Q}}
+\newcommand*{\ord}{\mathrm{ord}}
+\newcommand*{\inv}{^{-1}}
+
+\begin{document}
+
+\title{MATH 4320 Homework 5}
+\author{Dominick Twitty}
+\date{}
+\maketitle
+
+\section{On the Irreducibility of $1 + 2i$}
+We will show that $r = 1 + 2i$ is irreducible in $\Z[i]$ by constructing $N$ such that $N(u) = 1$ for unit $u$ and $N(r)$ is prime. First, we have that $\Z[i]$ is also known as the set of \emph{Gaussian Integers}, which are of the form $a + bi, a,b \in \Z$. It is known that the set of units of the Gaussian Integers is $\{1, -1, i, -i\}$.
+
+We define our function $N(a + bi) = a^2 + b^2$. First, we see that for all units $u$, $N(u) = 1$. We also see that $N(1 + 2i) = 5$ is prime. Finally, we must show that $N$ is multiplicative:
+\begin{align*}
+N((a + bi)(c + di)) &= N(a + bi)N(c + di)\\
+N((a c - bd) + (a d + bc)i ) &= (a^2 + b^2)(c^2 + d^2)\\
+a^2 c^2+a^2 d^2+b^2 c^2+b^2 d^2 &= a^2 c^2+a^2 d^2+b^2 c^2+b^2 d^2
+\end{align*}
+We see that $N$ is a multiplicative norm, maps units to 1, and maps $1 + 2i$ to a prime number. Therefore $1 + 2i$ is irreducible.
+
+\section{On Discrete Valuation Rings}
+We wish to show that $R = \{\frac{a}{b} \in \Q | \gcd(b, p) = 1\}$ for fixed prime $p$ is a DVR. First, we see the fractional field of $R$ is $\Q$. Using the fundamental theorem of arithmetic, we can write any $q \in Q$ as $p^k \frac{a}{b}$. Let $\nu(r) = k$. 
+
+We see that because $\nu$ is a function of exponents, $\nu(x y) = \nu(x) + \nu(y)$. We also see that if $\nu(x) \geq 0$ and $\nu(y) \geq 0$, then both the numerators of $x$ and $y$ will be multiples of $p$, thus $\nu(x + y)$ will be the at least as great as the minimum of $\nu(x)$ and $\nu(y)$. Finally, we see that if $\nu(\frac{a}{b}) < 0$ then the reduced form $\frac{c}{d}$ will have $\gcd(d, p) > 1$. Therefore, $R$ is the valuation ring of $\nu$ on $\Q$, and $R$ is a DVR.
+
+\pagebreak
+
+\section{On Divisibility in Euclidean Domains}
+\begin{claim*}
+Let $R$ be a Euclidean domain and $a, b, c, \in R$. If $a|bc$, then $d|c$ where $a = d \gcd(a, b)$.
+\end{claim*}
+\begin{proof}
+This is easy to see given that all euclidean domains are also unique factorization domains
+\begin{align*}
+a \, &| \, b \, c & & \text{Given}\\
+d \, \gcd(a, b) \, &| \, e \, c \, \gcd(a, b) & & \text{Factorization}\\
+d \, &| \, e \, c & & \text{Removal of common factors}
+\end{align*}
+\noindent We see that $d$ and $e$ share no prime factors, thus $\gcd(d, e) = 1$. By Euclid's lemma, $d | c$.
+\end{proof}
+
+\section{On the Principality of $I = (2, 1 + \sqrt{-5})$ in $\Z[\sqrt{-5}]$}
+It can be shown that the units of $\Z[\sqrt{-5}]$ are $\{1, -1\}$, and that for all $i \in I$, $2 | i^2$. We define the norm $N(a + b \sqrt{-5}) = a^2 + 5b^2$. It can be shown that $N$ is multiplicative, and that for unit $u$, $N(u) = 1$. 
+
+We assume that $I$ is principle, and $I = (p)$. Then $p | 2$ and $p | (1 + \sqrt{-5})$. Because $N$ is multiplicative, $N(p) | N(2) = 4$ and $N(p) | N(1 + \sqrt{-5}) = 6$. So, $N(p) | \gcd(4, 6) = 2$. There is no solution to $a^2 + 5b^2 = 2$, so $N(p) = 1$. The only solutions to $a^2 + 5b^2 = 1$ are $(a, b) = (\pm 1, 0)$.
+
+These solution are the units of $\Z[\sqrt{-5}]$, so $I = (p) = \Z[\sqrt{-5}]$ for all possible $p$. This cannot be the case - there are square elements of $\Z[\sqrt{-5}]$ that are not divisible by 2 (1, for example). Therefore, $I$ cannot be principle, and $\Z[\sqrt{-5}]$ is not a PID.
+
+\section{On Addition and Products in $D\inv R$}
+\begin{claim*}
+Let $D$ be a multiplicative subset of $R$. Define $D\inv R = R \times D / \sim$ where $(r_1, d_1) \sim (r_2, d_2)$ if $r_1 d_2 = r_2 d_1$. $D\inv R$ has well-defined addition and products.
+\end{claim*}
+Let $(r_1, d_1) \sim (r_2, d_2)$. We take advantage of the fact that $D$ contains neither 0 nor 0-divisors, as it lets us cancel terms involving $d_i \in D$.
+\begin{description}
+\item[Addition]
+\begin{align*}
+(r_1, d_1) + (r_3, d_3) &\sim (r_2, d_2) + (r_3, d_3)\\
+(r_1 d_3 + r_3 d_1, d_1 d_3) &\sim (r_2 d_3 + r_3 d_2, d_2 d_3)\\
+(r_1 d_3 + r_3 d_1)(d_2 d_3) &= (r_2 d_3 + r_3 d_2)(d_1 d_3)\\
+(r_1 d_3 + r_3 d_1)d_2 &= (r_2 d_3 + r_3 d_2)d_1\\
+r_1 d_2 d_3 + r_3 d_1 d_2 &= r_2 d_1 d_3 + r_3 d_1 d_2\\
+r_1 d_2&= r_2 d_1\\
+(r_1, d_1) &\sim (r_2, d_2)
+\end{align*}
+
+\item[Products]
+\begin{align*}
+(r_1, d_1)(r_3, d_3) &\sim (r_2, d_2)(r_3, d_3)\\
+(r_1 r_3, d_1 d_3) &\sim (r_2 r_3, d_2, d_3)\\
+r_1 r_3 d_2 d_3 &= r_2 r_3 d_1 d_3\\
+r_1 d_2 &= r_2 d_1\\
+(r_1, d_1) &\sim (r_2, d_2)
+\end{align*}
+\end{description}
+
+\section{On $D\inv R$ being a PID}
+\begin{claim*}
+If $R$ is a PID and $D$ is a multiplicative subset, then $D\inv R$ is also a PID.
+\end{claim*}
+\begin{proof}
+Let $I$ be ideal in $D\inv R$. Let $K = \{a \in R | (a,b) \in I\}$. We see that $(0, d) \in I$, so $0 \in K$. Let $a, b \in K$ with $(a, c), (b, d) \in I$, then $(a, c) - (d, c) (b, d) = (a - b, c)$ and $a - b \in K$. For all $r \in R$, $k \in K$ with $d \in D$, $(r,d)(k,d) = (ra, d^2)$, so $ra \in K$. Thus, $K$ is ideal in $R$.
+
+Let $K = (p)$. There exists some $d \in D$ with $(p, d) \in I$, so $((p, d)) \subseteq I$. For all $(i, e) = (kp, e) \in I$, we have $(i, e) = (kd, e)(p, d)$, so $I = ((p, d))$ is principle.
+\end{proof}
+
+\section{On the Irreducibility of $x^4 + 1$}
+Let $f = x^4 + 1$. We see that $f(x + 1) = (x + 1)^4 + 1 = x^4+4 x^3+6 x^2+4 x+2$ follows the Eisenstein Criterion with prime $p = 2$. Thus, $f(x + 1)$ is irreducible in $\Q[x]$, then $f(x + 1)$ is irreducible in $\Z[x]$, then $f$ is irreducible in $\Z[x]$.
+
+\section{On Fields and Maximal Ideals}
+\begin{claim*}
+$R / I$ is a field if and only if $I$ is maximal.
+\end{claim*}
+\begin{proof} We prove both directions
+\begin{description}
+\item[$\implies$] Let $R/I$ be a field, and that there is an ideal $J$ with $I \subset J \subset R$. For some $j \in J$ with $j \notin I$, $j + I$ has inverse $k + I$ with $(j + I)(k + I) = 1 + I$. In particular, $jk = 1 + i$ for some $i \in I \subseteq J$. Then $1 = jk - i\in J$, so $J = R$. Therefore, $I$ is maximal.
+
+\item[$\impliedby$] Let $I$ be maximal. Let $a + I$ be nonzero in $R/I$. Since $a \notin I$, we build an ideal 
+\[ J = \{ ra + i | r \in R, i \in I\}\]
+\noindent Because $I$ is maximal, and $J$ can only be bigger than $I$, $J = R$. Then $1 \in J$, and $1 = ra + i$ for some $r \in R$ and $i \in I$. So, $1 + I = (r + I)(a + I)$. We have shown that every $a + I$ must have an inverse, thus $R/I$ is a field.
+\end{description}
+\end{proof}
+
+\section{On the Primality of $I$ given Domain $R/I$}
+\begin{claim*}
+$R/I$ is a domain if and only if $I$ is prime.
+\end{claim*}
+\begin{proof} We prove both directions
+\begin{description}
+\item[$\implies$] Suppose $R/I$ is a domain. For every $ab \in I$, we have $(ab + I) = I = (a + I)(b + I)$. As $I$ is the zero element of $R/I$, at least one of $(a + I), (b + I)$ must equal $I$, meaning $a$ or $b$ must be in $I$. Therefore, $I$ must be prime.
+
+\item[$\impliedby$] Suppose $I$ is prime. Consider some $a,b$ for which $(a + I)(b + I) = I$. Then $(ab + I) = I$. Equivalently, $ab \in I$. Because $I$ is prime, $a$ or $b$ must be in $I$, and at least one of $(a + I), (b + I)$ must equal $I$. So, for every zero product $ab \in R/I$, $a$ or $b$ must be zero, and $R/I$ is a domain.   
+\end{description}
+\end{proof}
+
+\section{On Irreducible Monic Polynomials in $\Z_5[x]$}
+The polynomials given here were generated by a Python program (too long to list here) that exhaustively checks every polynomial in $\Z_5[x]$ for reducibility. Care was taken to ensure that all polynomial products and sums have coefficients in $\Z_5[x]$ - there exist monic polynomials that are irreducible in $\Z[x]$ but not in $\Z_5[x]$!
+\begin{align*}
+x^2+ 2 && x^2+ 1x+ 1 && x^2+ 2x+ 3 && x^2+ 3x+ 3 && x^2+ 4x+ 1\\
+x^2+ 3 && x^2+ 1x+ 2 && x^2+ 2x+ 4 && x^2+ 3x+ 4 && x^2+ 4x+ 2
+\end{align*}
+\end{document}

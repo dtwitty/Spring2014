@@ -30,7 +30,7 @@
 \date{}
 \maketitle
 
-\section{The Nine Rings of Power(sets)}
+\section{The One Ring of Power(set)}
 \begin{claim*}
 The powerset of $X$, $P(X)$, is a commutative ring with $A + B = (A - B) \cup (B - A)$ and $AB = A \cap B$.
 \end{claim*}
@@ -44,7 +44,7 @@ The given set and operations therefore satisfy all requirements of a commutative
 
 \section{Subring of the Rationals}
 \begin{claim*}
-Let $D \in \mathbb{Q}$ not be a perfect square. $\mathbb{Q}(\sqrt{D}) = \{a + b\sqrt{D} | a, b \in \mathbb{Q}\}$ is a subring of $\mathbb{C}$. Moreover $\mathbb{Q}(\sqrt{D})$ is a field.  
+Let $D \in \mathbb{Q}$ not be a perfect square. $\mathbb{Q}(\sqrt{D}) = \{a + b\sqrt{D} | a, b \in \mathbb{Q}\}$ is a subring of $\mathbb{C}$.
 \end{claim*}
 \begin{proof}
 To show that $\mathbb{Q}(\sqrt{D})$ is a subring, we must show that it is a subgroup under addition, is closed under multiplication, and contains the multiplicative identity. First, we see that it contains the additive inverse $0 = 0 + 0\sqrt{D}$, and the multiplicative inverse $1 = 1 + 0\sqrt{D}$. Next, we show that $\mathbb{Q}(\sqrt{D})$ is closed under addition.
@@ -58,18 +58,15 @@ Next, we show that it is closed under multiplication. Remember that $D$ is ratio
 Finally, we see that $\mathbb{Q}(\sqrt{D})$ contains additive inverses for all elements. For some $x = a + b\sqrt{D}$, let $-x = (-a) + (-b)\sqrt{D}$. We have now shown that $\mathbb{Q}(\sqrt{D})$ meets all requirements of a subring.
 \end{proof}
 
+\pagebreak
 \begin{claim*}
 $\mathbb{Q}(\sqrt{D})$ is a field.
 \end{claim*}
 \begin{proof}
 We must show that every non-zero element of $\mathbb{Q}(\sqrt{D})$ has a multiplicative inverse. It can be shown that every element of the form $a + b\sqrt{D}$ has an inverse
-\begin{align*}
-\frac{a - b\sqrt{D}}{a^2 -b^2D}
-\end{align*}
+\[\frac{a - b\sqrt{D}}{a^2 -b^2D}\]
 We see that both coefficients are rational as $D$ is rational, and is defined as long as $a^2 \neq b^2D$. If this were the case, then we'd have  that
-\begin{align*}
-a^2 = b^2D \implies D = \frac{a^2}{b^2}
-\end{align*}
+\[a^2 = b^2D \implies D = \frac{a^2}{b^2}\]
 Then we would have a contradiction, as we stated that $D$ is not a perfect square. Therefore, this form of inverse is defined for all $a, b$. As every nonzero element has an inverse, $\mathbb{Q}(\sqrt{D})$ is a field.
 \end{proof}
 
@@ -95,7 +92,7 @@ Notice in the last substitution that we fused sums over 1 and 2 variables into a
 \section{$F((x))$ is a Field}
 One can easily see that $F((x))$ is closed under addition and multiplication - as addition and multiplication of finitely many finite integers will never produce an infinite result, we have that the addition or product of two members of $F((x))$ will have finitely many negative powers. Therefore, $F((x))$ is a subring of $F(x)$. $F((x))$ is commutative and associative for the same reason that $F[[x]]$ is.
 
-What is left to show is that $F((x))$ is closed under inversion. Suppose we have some $f = f_Nx^N + f_{N+1}x^{N+1} + \ldots$ in $F((x))$. Consider $g = g_Nx^0 + f_{N+1}x^1 + \ldots$ in $F((x))$. We may write $f = x^Ng$. We also see that $G$ is in $F[[x]]$. We see that as $F$ is a field, the leading coefficient of $g$ is invertible, and by proposition 7.5 of \cite{wagner}, $g$ is invertible in $F[[x]]$. Consider some $h = x^{-N}g\inv$. Then we have 
+What is left to show is that $F((x))$ is closed under inversion. Suppose we have some $f = f_Nx^N + f_{N+1}x^{N+1} + \ldots$ in $F((x))$. Consider $g = g_Nx^0 + f_{N+1}x^1 + \ldots$ in $F((x))$. We may write $f = x^Ng$. We also see that $g$ is in $F[[x]]$. We see that as $F$ is a field, the leading coefficient of $g$ is invertible, and by proposition 7.5 of \cite{wagner}, $g$ is invertible in $F[[x]]$. Consider some $h = x^{-N}g\inv$. Then we have 
 \begin{align*}
 fh = x^N g x^{-N} g\inv = 1
 \end{align*}
@@ -103,9 +100,8 @@ Therefore, by the existence of inverses in $F[[x]]$, we have that inverses exist
 \section{11 is not Prime in $\mathbb{Z}(\sqrt{5})$}
 \begin{proof}
 Let $x = a + b\sqrt{5}$ and $y = c + d\sqrt{5}$. We wish to show that 11 divides $xy$, then 11 divides neither $x$ nor $y$. First, the form of elements divisible by 11 is
-\begin{align*}
-(11 + 0\sqrt{5})(j + k\sqrt{5}) = 11j + 11k\sqrt{5}
-\end{align*}
+
+\[(11 + 0\sqrt{5})(j + k\sqrt{5}) = 11j + 11k\sqrt{5} \]
 
 So if 11 divides $a + b\sqrt{5}$, then 11 divides both $a$ and $b$. If 11 divides $xy$, then
 \begin{align*}
@@ -115,15 +111,10 @@ We must show that there exist $a$, $b$, $c$, and $d$ such that the above conditi
 It is enough to show that 11 has no multiplicative inverse in $\mathbb{Z}(\sqrt{5})$. We have that $\nicefrac{1}{11}$ is rational, but $a + b\sqrt{5}$ is not rational for $b \neq 0$. Otherwise it could be shown that $\sqrt{5}$ is rational. So, 11 does not divide $a$ or $c$, and therefore divides neither $x$ nor $y$. Therefore, 11 is not prime in $\mathbb{Z}(\sqrt{5})$.
 \end{proof}
 
-\section{Radical of Ideal is Ideal}
-\begin{claim*}
-Let $I \subset R$ be an ideal. Let $\sqrt{I} = \{r \in R \, | \, \exists n \in \mathbb{N} : r^n \in I\}$. $\sqrt{I}$ is an ideal.
-\end{claim*}
+\section{Radical of an Ideal is an Ideal}
 \begin{proof}
 First, we have that $I \subseteq \sqrt{I}$. We show that $\sqrt{I}$ is closed under addition. Consider $a^n, b^m \in I$. Then
-\begin{align*}
-(a + b) ^ {m + n} = \sum_{k = 0} ^{m + n} \binom{m + n}{k} a^k b^{m + n - k}
-\end{align*}
+\[(a + b) ^ {m + n} = \sum_{k = 0} ^{m + n} \binom{m + n}{k} a^k b^{m + n - k}\]
 Because $I$ is an ideal, if $k \geq n$, then $a^k \in I$, otherwise $b ^ {m + n - k} \in I$. Every term in the expansion of the sum is in $I$, therefore the entire sum is in $I$, and $\sqrt{i}$ is closed under addition. Next we show that $\sqrt{I}$ is absorbs multiplications. For $r \in R$, $(ra)^n = r^n a^n$ is in $I$. Therefore, if $a \in \sqrt{I}$, $ra \in \sqrt{I}$. Finally, we must show that $\sqrt{I}$ is closed under additive inversion to show that it is a subgroup. Consider $a^n \in I$. If $n$ is even, then $(-a)^n = a^n \in I$. If $n$ is odd, $(-a)^{n + 1} = a^{n + 1} = a^n a \in I$. Therefore, $\sqrt{I}$ is closed under addition and is an ideal.
 \end{proof}
 
@@ -133,14 +124,11 @@ First, we see that every member of $(x, y)$ must have a zero constant term. Supp
 \end{proof}
 
 
-\section{Prime Ideals, Implications of}
-\begin{claim*}
-An ideal $I$ of $\mathbb{Z}$ is prime if and only if $I = (p)$ where $p$ is prime.
-\end{claim*}
+\section{An ideal $I$ of $\mathbb{Z}$ is prime if and only if $I = (\text{prime } p)$}
 \begin{proof}
-First, we have that if $I$ is an ideal in the integers, $I$ must have some property that is closed under addition, and multiplication involving this property must be produce this property. One such property is having a certain prime factor $p$. Under multiplication this is trivial to show - if $p | a$, then $p | ab$. It can also be shown that if $p | a$ and $p | b$, then $p | (a + b)$.
+First, we see that $(p)$ is the set of all integers divisible by $p$. By Euclid's lemma, if $ab \in (p)$,  $a$ or $b$ must be in $(p)$. We also have that if $p | a$ and $p | b$, $p | (a + b)$. Finally, if $p | a$, then $p | ab$, so $(p)$ is a prime ideal.
 
-So, the set of all integers divisible by $p$ forms a prime ideal. This can be expressed as the set of all $zp$ for integral $z$. This is exactly equal to $(p)$. So, we have shown that $(p)$ is a prime ideal. We also say that divisibility by a certain prime is the only property of the integers that can create an ideal of this type.
+Consider the other direction. Let $d$ be the smallest positive element of $I$. Consider $x \in I$. We divide $x$ by $d$ to get $x = qd + r$, with $0 \leq r < d$. Equivalently, $r = x - qd$. Because $I$ is an ideal, we know that both $x$ and $qd$ are in $I$, thus $r$ is in $I$. In the division algorithm, $0 \leq r < d$, but $d$ is minimal, so $r = 0$ and $I = (d)$. Let $d = ab$. Then $d | ab$ but $d \nmid a$ and $d \nmid b$. Therefore, $d$ is prime.
 \end{proof}
 
 \section{$\sqrt{P} = P$ for Prime Ideal $P$}
@@ -148,7 +136,7 @@ So, the set of all integers divisible by $p$ forms a prime ideal. This can be ex
 Let $x \in \sqrt{P}$. For some minimal $n \geq 1$, $x ^ n \in P$. If $n \geq 2$, $x x^{n - 1} \in P$. As $P$ is prime, either $x \in P$ or $x ^ {n - 1} \in P$. As $n$ is minimal, $x ^ {n - 1} \notin P$, so $x \in P$. 
 \end{proof}
 
-\begin{thebibliography}{9}
+\begin{thebibliography}{2}
 \bibitem{wagner} \url{http://www.math.uwaterloo.ca/~dgwagner/co430I.pdf}
 \end{thebibliography}
 
