@@ -9,7 +9,10 @@ class Polynomial:
 		self.coeffs = tup
 		self.degree = len(tup) - 1
 	def __getitem__(self, index):
-		return self.coeffs[index]
+		if index < len(self.coeffs):
+			return self.coeffs[index]
+		else:
+			return 0
 	def __add__(self, other):
 		base, op = self, other
 		if self.degree < other.degree:
@@ -40,15 +43,16 @@ def combos(d):
 			for i in xrange(mod):
 				yield (i,) + k
 
-def all_poly():
-	for tup in combos(max_degree):
+def all_poly(n = max_degree):
+	for tup in combos(n):
 		yield Polynomial(tup)
 
 def reducible(poly):
-	for p in all_poly():
-		for q in all_poly():
+	for p in all_poly(max_degree):
+		for q in all_poly(poly.degree - p.degree):
 			if p * q == poly:
 				if p.degree > 0 and q.degree > 0:
+					# print p, q, poly
 					return True
 	return False
 
