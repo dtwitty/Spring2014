@@ -39,7 +39,6 @@
 \maketitle
 
 \section{On Algebraic Elements of an Extension}
-%TODO 1
 \begin{claim*}
 Let $F$ be a field and $K$ be an extension. If $\alpha, \beta \in K$ are algebraic, then $\alpha \pm \beta$, $\alpha \beta$, and $\nicefrac{\alpha}{\beta}$ are also algebraic.
 \end{claim*}
@@ -105,8 +104,7 @@ gh = \left(\frac{-120\theta}{1301} + \frac{271}{2602}\right)f + 1
 \end{align*}
 
 
-\section{}
-%TODO 5
+\section{On the Degree of Square Root Extensions}
 \begin{claim*}
 Let $F$ be a field with characteristic $\neq 2$. Let $D_1, D_2 \in F$ not be squares. $F(\sqrt{D_1}, \sqrt{D_2})$ is a degree 4 extension if $D_1D_2$ is not square in $F$, else degree 2
 \end{claim*}
@@ -114,12 +112,15 @@ Let $F$ be a field with characteristic $\neq 2$. Let $D_1, D_2 \in F$ not be squ
 \begin{proof}
 First, we see that $F(\sqrt{D_1})$ is a degree 2 extension. We can see this by constructing $p = x^2 - D_1 \in F[x]$, which has $\sqrt{D_1}$ as a root. AS $p$ has degree two, and $\sqrt{D_1} \notin F$, $p$ is irreducible, and $F[x] / (p) = F(\sqrt{D_1})$ has degree 2. Similar thinking holds for $F(\sqrt{D_2})$.
 
-Treating $F(\sqrt{D_1}, \sqrt{D_2})$ as $F(\sqrt{D_1})(\sqrt{D_2})$, all elements have the form
+\noindent Treating $F(\sqrt{D_1}, \sqrt{D_2})$ as $F(\sqrt{D_1})(\sqrt{D_2})$, all elements have the form
 \begin{align*}
-(a + b\sqrt{D_1}) + (c + d\sqrt{D_1})\sqrt{D_2}\\
-a + b\sqrt{D_1} + c\sqrt{D_2} + d\sqrt{D_1 D_2}
+(a + b\sqrt{D_1}) + (c + d\sqrt{D_1})\sqrt{D_2} &= a + b\sqrt{D_1} + c\sqrt{D_2} + d\sqrt{D_1 D_2}
 \end{align*}
-with $a,b,c,d \in F$. If $\sqrt{D_1 D_2} \notin F$, then we have a vector space of size 4. However, if $\sqrt{D_1 D_2} \in F$, then $d\sqrt{D_1 D_2} \in F$, and we have at most a vector space of size 3. 
+with $a,b,c,d \in F$. If $\sqrt{D_1 D_2} \notin F$, then we have a vector space of size 4. Remember that all fields are UFDs. If $D_1 D_2$ is square, then it factors into a product of even powers of prime elements. 
+
+We claim that either $D_1 = D_2$ or at least one of $D_1, D_2$ is not squarefree. Assume both $D_1$ and $D_2$ are squarefree. Both $D_1$ and $D_2$ must have at least one factor with an odd power in order to not be squares. For $D_1D_2$ to be square, then for every factor $p^{2k} | D_1D_2$, then the powers of $p$ in $D_1$ and $D_2$ must add to $2k$. Each of these powers must then be less than two, else $D_1$ or $D_2$ would not be squarefree. The only power that satisfies this is 1 for every factor, meaning $D_1$ and $D_2$ share a factorization and $D_1 = D_2$.
+
+If $D_1 = D_2$, then $F(\sqrt{D_1}, \sqrt{D_2}) = F(\sqrt{D_1})$ which has degree 2. If either $D$ has a square factor $p$, then we can rewrite $\sqrt{D} = p\sqrt{\frac{D}{p^2}}$. Let $C_1$ and $C_2$ be the remaining non-squares after dividing out all squared factors. If $D_1D_2$ is square, then $C_1C_2$ is also square. By our claim above, $C_1 = C_2$. This means every $b \sqrt{D_1} + c\sqrt{D_2}$ can be expressed as a multiple of $\sqrt{C_1}$, so we lose one degree. Finally, $d \sqrt{D_1 D_2} \in F$, so we lose another degree, which brings us to 2.
 \end{proof}
 
 
@@ -148,7 +149,7 @@ So $p = x^4 - 10x^2 + 1$
 By Theorem 4.59 in the textbook, a $p$-gon for prime $p$ is constructible if and only $p = 2 ^ {2 ^ k} + 1$ for some $k$. These numbers, called the Fermat Primes, include $3, 5, 17, 257, \ldots$, but not $7$. Therefore, it is impossible to construct a regular heptagon with straightedge and compass.
 
 
-\section{Inscribing a Hexagon in a Circle}
+\section{On the Inscription of a Hexagon in a Circle}
 Consider some regular hexagon $H$ inscribed in a circle $C$ with center $o$ and radius $r$. Let $p_1$ and $p_2$ be adjacent vertices of $H$. We see that the triangle $(p_1,p_2,o)$ is equilateral. From this, we can say that the side length of $H$ is exactly equal to $r$.
 
 \begin{figure}[H] \centering
