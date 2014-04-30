@@ -1,0 +1,273 @@
+% Copyright 2004 by Till Tantau <tantau@users.sourceforge.net>.
+%
+% In principle, this file can be redistributed and/or modified under
+% the terms of the GNU Public License, version 2.
+%
+% However, this file is supposed to be a template to be modified
+% for your own needs. For this reason, if you use this file as a
+% template and not specifically distribute it as part of a another
+% package/program, I grant the extra permission to freely copy and
+% modify this file as you see fit and even to delete this copyright
+% notice. 
+
+\documentclass{beamer}
+\usepackage{tikz}
+\usepackage{float}
+\usetikzlibrary{topaths,calc}
+\usetheme{Frankfurt}
+\usecolortheme{rose}
+
+\addtobeamertemplate{frametitle}{
+   \let\insertframetitle\insertsectionhead}{}
+\addtobeamertemplate{frametitle}{
+   \let\insertframesubtitle\insertsubsectionhead}{}
+
+
+\makeatletter
+  \CheckCommand*\beamer@checkframetitle{\@ifnextchar\bgroup\beamer@inlineframetitle{}}
+  \renewcommand*\beamer@checkframetitle{\global\let\beamer@frametitle\relax\@ifnextchar\bgroup\beamer@inlineframetitle{}}
+\makeatother
+
+\makeatletter
+\newenvironment<>{proofs}[1][\proofname]{%
+    \par
+    \def\insertproofname{#1\@addpunct{.}}%
+    \usebeamertemplate{proof begin}#2}
+  {\usebeamertemplate{proof end}}
+\makeatother
+
+\title{Matching Problem Generalizations on Hypergraphs}
+\subtitle{or ``Why You Hate Your Roommate''}
+
+\author{Dominick Twitty (\texttt{dkt36})\\
+\and Kelvin Luu (\texttt{kl583})\\
+\and Jeff Tian (\texttt{yt336})
+}
+
+\date{Networks II Final Project Presentation}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{Problem Statement}
+\begin{frame}
+\begin{itemize}
+\item Networks II studies matchings on bipartite graphs - two agents from different sets get matched
+
+\item We can generalize matchings to deal with an arbitrary number of agents and sets
+
+\item Using hypergraphs, we can encode problems where agents have preferences over sets of items
+\end{itemize}
+
+\end{frame}
+
+\subsection{A Driving Example}
+\begin{frame}
+\begin{itemize}
+\item At Cornell, freshmen fill out a questionnaire to determine roommate compatibility, and then they are placed into rooms to try to maximize compatibility.
+
+\item Some people love their roommate, but there are lots of people who'd rather switch with someone else.
+
+\item How can we provide students with better matches?
+\end{itemize}
+\end{frame}
+
+
+\subsection{Detailed Formulation}
+\begin{frame}
+We define the following problem:
+\begin{block}{The Binary Freshman Roommates Problem}
+\begin{description}
+\item[Inputs:]
+\begin{itemize}
+\item $S$ : A set of students who need rooms
+\item $C_s$: The set of roommates $s$ can live with
+\item $L$ : A list of available room sizes.
+\end{itemize}
+
+\item[Objective:]
+Output a room assignment $M$ such that the maximum number of students have compatible roommates.
+\end{description}
+\end{block}
+\end{frame}
+
+
+\begin{frame}
+We also define the problem given rank-order preferences
+\begin{block}{The Rank-Order Freshman Roommates Problem}
+\begin{description}
+\item[Inputs:]
+\begin{itemize}
+\item $S$ : A set of students who need rooms
+\item $P(s)$ : Preferences for each student $s$ over all subsets containing $s$.
+\item $L$ : A list of available room sizes.
+\end{itemize}
+
+\item[Objective:]
+Output a stable or Pareto-efficient room assignment.
+\end{description}
+\end{block}
+\end{frame}
+
+\section{Analysis}
+
+\subsection{Intractability}
+\begin{frame}
+In general, this is a very difficult problem
+\begin{block}{Claim}
+The Binary Freshman Roommates Problem is NP-Complete
+\end{block}
+\begin{proof}
+We reduce from the clique problem. Given a graph $G = (V, E)$ and a number $k$, we encode the following FRP:
+\begin{itemize}
+\item $S = V$
+\item $C(v) = \{u : (u, v) \in E\}$
+\item $L$ is one room of size $k$, and $|V| - k$ roomss of size 1.
+\item Return "Yes" if all students are assigned a room, else "No"
+\end{itemize}
+\end{proof}
+\end{frame}
+
+%\begin{frame}{NP-Completeness}
+%\begin{proofs}[\proofname\ (Cont.)]
+%\begin{description}
+%\item[Yes to Yes] If there is a clique of size $k$, then all vertices in that clique will list each other as compatible. These clique vertices fill the size $k$ room, and all other vertices fill the single rooms.
+%
+%\item[No to No] If the largest clique is of size less than $k$, then the big room can't fill up. However, there aren't enough singles to take cover all the other students, so some students must be left out. 
+%\end{description}
+%\end{proofs}
+%\end{frame}
+
+\begin{frame}{N}
+\begin{itemize}
+\item Unless P = NP, any algorithm for solving the binary problem will not be polynomial. 
+\item This is a very hard problem, and even if you could find a maximum allocation, you are still obligated to assign incompatible students to whatever slots are left.
+\item Can we still reason about this problem given rank-order preferences?
+\end{itemize}
+\end{frame}
+
+\subsection{Good Matches}
+
+\begin{frame}
+What is stability in this situation?
+\begin{itemize}
+\item Every student has a preference over sets of roommates.
+\item A matching $M$ is blocked by $T \notin M$ if all students in $T$ prefer $T$ to their current set.
+\item This is a generalized definition of a blocking pair.
+\end{itemize}
+
+Stability is not always guaranteed. For instance, the stable roommates problem is an instance of FRP with $2n$ students and $n$ rooms of size 2. It is known that there are instances of SRP with no solution, therefore not every FRP has a stable solution.
+\end{frame}
+
+\begin{frame}
+How about Pareto-efficiency?
+\begin{itemize}
+\item Definition of Pareto-efficiency generalizes trivially.
+\item It can be shown using the pigeonhole principle that every FRP has a Pareto-efficient matching.
+\item Pareto-efficiency is a nice way to promise a student she can't switch rooms without strictly hurting someone else.
+\end{itemize}
+\end{frame}
+
+\section{Algorithms}
+\subsection{Solving the Binary Problem}
+\begin{frame}
+\begin{itemize}
+\item Given $l$ room slots, a maximum room size $k$ and $n$ students, we have constructed an algorithm to determine the maximum number of students that can be allocated compatibly.
+\item The algorithm is based on max flow and has runtime $\mathcal{O}(n^{3k})$
+\item A brute-force approach takes something like $\displaystyle \sum_{r = 1}^n r! \binom{n}{r} \binom{l}{r}$
+\item The addition of the list of rooms keeps us from reducing to Set Packing, and also complicates formulations with Integer Linear Programming.
+\end{itemize}
+\end{frame}
+
+\subsection{Generating Pareto-Efficient Matchings}
+\begin{frame}
+\begin{itemize}
+\item Clearly, this problem is too hard to be interesting even by NP-Hard optimization standards.
+\item The rank-order version of the problem lets us make assumptions that simplify the problem.
+\item For example, we can safely require that the number of room slots equal the number of students while still maintaining individual rationality.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{itemize}
+\item In order to Pareto-improve a matching, one student must switch rooms, which implies kicking someone else out of their room.
+\item This trade can happen along a cycle, so long as the number of students in each room remains constant.
+\item Generally, we know we can improve a matching if some coalition of students owns a set of rooms, and there is a way to reassign them to those rooms such that everyone benefits.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+We propose the following algorithm, which attempts to Pareto-dominate an existing matching $M$
+\begin{block}{The FRP HyperCycle Algorithm}
+\begin{itemize}
+\item Create a hypergraph $G$. Add a vertex for every student and every room.
+\item For every existing group $T \in M$ with room $r$, add a \emph{``dark''} hyperedge surrounding $T$ and $r$.
+\item For every blocking set $T' \notin M$, create a \emph{``light''} hyperedge surrounding $T'$ and $r$ for every compatibly-sized room $r$.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\begin{block}{The FRP HyperCycle Algorithm (Cont.)}
+\begin{itemize}
+\item Ask if there is some set $D$ of dark edges and a set $L$ of light edges such that:
+\begin{itemize}
+\item All dark edges are pairwise disjoint
+\item All light edges are pairwise disjoint
+\item $D$ and $L$ cover the same vertices
+\end{itemize}
+\item If no such $D$ and $L$ exist, then $M$ is Pareto-efficient.
+\item If they do exist, for each $(T', r) \in L$, assign group $T'$ to $r$ to Pareto-improve $M$. Rinse and repeat.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\begin{itemize}
+\item The FRP HyperCycle Algorithm takes inspiration from the TTC algorithm and the Pareto-efficient roommates algorithm.
+\item Every dark edge represents a current allocation. Every light edge represents an opportunity to improve.
+\item If $D$ and $L$ exist, then $D$ provides students and rooms as inputs, and $L$ provides a better way to reallocate them.
+\item If they don't exist, then there is no subset of students and rooms that can be reordered, thus the matching is Pareto-efficient.
+\end{itemize}
+\end{frame}
+
+\section{Conclusion}
+\subsection{Limitations}
+\begin{frame}
+We are well aware of the limitations of our results.
+\begin{itemize}
+\item As was fully expected, our generalized algorithms will have monstrous complexities.
+\item For example, we solve the maximum bipartite matching problem in $\mathcal{O}((n + m)^3)$. 
+\item The rank order version of this problem is also very intense, requiring long preference lists.
+\item We hope to include ``useful'' solutions as well as optimal ones.
+\end{itemize}
+
+\end{frame}
+
+\subsection{Open Questions}
+\begin{frame}
+There are still questions we will hopefully have time to explore in our final report
+\begin{itemize}
+\item Can we extend the HyperCycle algorithm to include more housing slots than students?
+\item Can we deal with multiple sets, like how males and females cannot live together?
+\item Is there some heuristic for generating a ``pretty good'' allocation? For example, what if you only allow people to swap rather than trade on a cycle?
+\end{itemize}
+\end{frame}
+
+\subsection{Signing Off}
+\begin{frame}
+\begin{center}
+\Huge Thank You
+\end{center}
+
+\end{frame}
+
+
+
+
+\end{document}
+
+
