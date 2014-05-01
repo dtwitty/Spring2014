@@ -1,0 +1,160 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{enumerate}
+\usepackage{mathtools}
+
+
+\newtheorem*{claim}{Claim}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{definition}{Definition}
+\begin{document}
+\title{INFO 4220 Homework 5}
+\author{Dominick Twitty}
+\date{}
+\maketitle
+
+\section{Comparing Pareto-Efficient Matchings}
+It can be shown that a complete marriage market with two non-comparable stable matchings must have at least 4 men and 4 women. The following market and matchings were generated and verified via a Python script which enumerates stable matchings on random marriage markets. Consider the following marriage market
+\begin{align*}
+m_1 &: w_1 \succ w_3 \succ w_4 \succ w_2 & w_1 &: m_2 \succ m_4 \succ m_1 \succ m_3\\
+m_2 &: w_3 \succ w_4 \succ w_2 \succ w_1 & w_2 &: m_4 \succ m_1 \succ m_3 \succ m_2\\
+m_3 &: w_3 \succ w_2 \succ w_4 \succ w_1 & w_3 &: m_4 \succ m_2 \succ m_1 \succ m_3\\
+m_4 &: w_4 \succ w_1 \succ w_3 \succ w_2 & w_4 &: m_3 \succ m_1 \succ m_4 \succ m_2
+\end{align*}
+
+\noindent With stable matchings
+\begin{align*}
+M_1 &= \{(0, 0), (1, 2), (2, 1), (3, 3)\}\\
+M_2 &= \{(0, 1), (1, 0), (2, 3), (3, 2)\}\\
+M_3 &= \{(0, 1), (1, 2), (2, 3), (3, 0)\}\\
+M_4 &= \{(0, 3), (1, 0), (2, 1), (3, 2)\}\\
+M_5 &= \{(0, 3), (1, 2), (2, 1), (3, 0)\}
+\end{align*}
+
+It can be shown that neither all men nor all women strictly prefer one of $M_3$ and $M_4$. Therefore, we have shown that not every stable matching can be compared, and by implication we have shown that not every Pareto-efficient matching can be compared.
+\section{Implications of DA Algorithm Agreement}
+\begin{claim}
+If the man-proposing and woman-proposing algorithms both return a matching $\mu$, then $\mu$ is the unique stable matching.
+\end{claim}
+\begin{proof}
+Recall the theorems (and their gender-swapped equivalents)
+\begin{itemize}
+\item The man-proposing DA algorithm returns the man-optimal matching.
+\item The man-optimal matching is woman-pessimal.
+\item The set of agents matched in every stable matching is the same.
+\end{itemize}
+
+Given that $\mu$ is man-optimal, all women will weakly prefer any stable matching over $\mu$. Thus, the woman-proposing algorithm, given the existence of another matching, will not produce $\mu$. However, this is not the case, meaning there was no other matching for the woman-prosing algorithm to return. Therefore, there was  only one matching.
+\end{proof}
+
+\section{Preferences Over Sets}
+We are given the set-preference market with worker preferences
+\begin{align*}
+w_1 &: F_2, F_1 & w_2&: F_2, F_1 & w_3 &: F_1, F_2
+\end{align*}
+\noindent and firm preferences
+\begin{align*}
+F_1&: \{w_1, w_3\}, \{w_1, w_2\},
+\{w_2, w_3\}, \{w_1\}, \{w_2\}\\
+F_2&: \{w_1, w_3\}, \{w_2, w_3\}, \{w_1, w_2\},\{w_3\}, \{w_1\}, \{w_2\}
+\end{align*}
+
+We have the following set of possible matchings
+\begin{center}
+\begin{tabular}{l | l || c }
+$F_1$ & $F_2$ & Stable? (or blocking pair)\\\hline
+$\{w_1, w_3\}$ & $\{w_2\}$ & $(F_2, w_1)$\\
+$\{w_1, w_3\}$ & $\{\}$ & $(F_2, w_2)$\\
+$\{w_1, w_2\}$ & $\{w_3\}$ & $(F_2, w_2)$\\
+$\{w_1, w_2\}$ & $\{\}$ & $(F_2, w_3)$\\
+$\{w_2, w_3\}$ & $\{w_1\}$ & $(F_2, w_2)$\\
+$\{w_2, w_3\}$ & $\{\}$ & $(F_2, w_1)$\\
+$\{w_1\}$ & $\{w_2, w_3\}$ & $(F_1, w_3)$\\
+$\{w_1\}$ & $\{w_3\}$ & $(F_1, w_3)$\\
+$\{w_1\}$ & $\{w_2\}$ & $(F_2, w_1)$\\
+$\{w_1\}$ & $\{\}$ & $(F_2, w_1)$\\
+$\{w_2\}$ & $\{w_1, w_3\}$ & $(F_1, w_3)$\\
+$\{w_2\}$ & $\{w_3\}$ & $(F_1, w_3)$\\
+$\{w_2\}$ & $\{w_1\}$ & $(F_2, w_2)$\\
+$\{w_2\}$ & $\{\}$ & $(F_2, w_1)$\\
+$\{\}$ & $\{w_1, w_3\}$ & $(F_1, w_2)$\\
+$\{\}$ & $\{w_2, w_3\}$ & $(F_1, w_1)$\\
+$\{\}$ & $\{w_1, w_2\}$ & Stable\\
+$\{\}$ & $\{w_3\}$ & $(F_1, w_1)$\\
+$\{\}$ & $\{w_1\}$ & $(F_1, w_2)$\\
+$\{\}$ & $\{w_2\}$ & $(F_1, w_1)$\\
+$\{\}$ & $\{\}$ & $(F_2, w_1)$
+\end{tabular}
+\end{center}
+
+
+
+\section{Stable Matches under Weak Preferences}
+\begin{enumerate}[(a)]
+\item Consider the following marriage market
+\begin{align*}
+m_1 &: w_1 = w_2 & w_1 &: m_1 = m_2\\
+m_2 &: w_1 = w_2 & w_2 &: m_1 \succ m_2 
+\end{align*}
+
+We see that the matching $M = \{(m_1, w_1), (m_2, w_2)\}$ is stable, as only $w_2$ strictly prefers someone over her current match. However, this match is not Pareto-efficient, as it is dominated by $M' = \{(m_1, w_2), (m_2, w_1)\}$. Therefore, stability does not imply Pareto-efficiency given weak preferences.
+
+\item Consider the following marriage market
+\begin{align*}
+m_1 &: w_1 \succ w_2 & w_1 &: m_1 = m_2\\
+m_2 &: w_1 \succ w_2 & w_2 &: m_1 = m_2 
+\end{align*}
+Wee see that both matchings $M = \{(m_1, w_1), (m_2, w_2)\}$ and $M' = \{(m_1, w_2), (m_2, w_1)\}$ are stable. However, $m_1$ strictly prefers $M$ and $m_2$ strictly prefers $M'$. Therefore there does not always exist a man-optimal stable matching given weak preferences.
+
+\item 
+Consider the degenerate weak preferences market where every man and woman equally prefer their set of compatible spouses. This is equivalent to a binary preferences market. Consider the following marriage market
+\begin{align*}
+m_1 &: w_1 = w_2 & w_1 &: m_1\\
+m_2 &: w_2 & w_2 &: m_1 = m_2 
+\end{align*}
+
+We see that the matchings $M = \{(m_1, w_2)\}$ and $M' = \{(m_1, w_1), (m_2, w_2)\}$ are stable. However, they are of different size, and they match different sets of agents. Consider the following
+\begin{claim}
+A matching $M$ on degenerate marriage market is stable if and only if $M$ is maximal.
+\end{claim}
+\begin{proof}
+Assume $M$ is not maximal. Then have $m$ and $w$ be compatible, yet not matched with any other agent. Then $M$ is not stable, since $m$ and $w$ would strictly prefer to be matched. So, not maximal implies not stable, and by contraposition, stable implies maximal.
+
+Now assume that $M$ is not stable. Then there exist some $m$ and $w$ who would strictly benefit from being matched. As a matched agent can never strictly improve (remember, equal preferences), so $m$ and $w$ must be unmatched. This means $M$ is also not maximal, because we can safely add $(m, w)$. Therefore, not stable implies not maximal, and by contraposition, maximal implies stable.
+\end{proof}
+
+It is easy to see that there are bipartite graphs with multiple, different size maximal matchings (we give one above), so under weak preferences, the number and set of matched agents in a stable match is not unique. 
+\end{enumerate}
+
+
+\section{Matchings with Universal Preferences}
+\begin{enumerate}[(a)]
+\item
+\begin{claim}
+Given universally shared, strict-order preferences, the graduate school market has a unique stable matching.
+\end{claim}
+\begin{proof}
+Consider the student $s_O$ with the highest GPA, and the school $t_O$ with the highest rank. Suppose a matching including $(s_O, t')$ and $(s', t_O)$. We see that $s_O$ prefers $t_O$ to $t'$, and $t_O$ prefers $s_O$ to $s'$ for all $s', t'$. So, $s_O$ and $t_O$ form a blocking pair. Thus, every stable matching will include $(s_O, t_O)$. One can see that by induction that when we rank students $s_1, s_2, \ldots$ by descending GPA, and rank schools $t_1, t_2, \ldots$ by descending rank, a stable matching $M$ must contain $(s_i, t_i)$ for all $i$. Therefore, $M$ is the unique stable matching.
+\end{proof}
+
+\item 
+\begin{claim}
+Given that students have incomplete preferences, there is still a unique stable matching.
+\end{claim}
+\begin{proof}
+Once again consider the optimal student $s_O$. As we showed above, $s_O$ will be matched with her top school in every stable matching. Remove $s_O$ and this school from the market and induct until the next best student $s_l$ has no school to choose from. Then, for every one of her schools $t$, there was some student $s' > s_l$ who had $t$ at the top of their preference list. If we had matched $(s_l, t)$, then $(s', t)$ would form a blocking pair. Therefore, by the theorem that the matched set in every stable matching is identical, $s_l$ is in no stable matching. 
+\end{proof}
+
+\item Given that schools will only accept a subset of the prospective students, one can modify the problem into a version of the previous problem by removing school $t$ from the preference list of student $s$ if $t$ will not accept $s$. Then we have a version of the previous problem, and as we showed, there is a unique stable matching on this type of market. 
+
+\end{enumerate}
+
+
+
+
+
+
+
+\end{document}

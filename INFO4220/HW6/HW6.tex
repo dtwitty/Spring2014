@@ -1,0 +1,63 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{enumerate}
+\usepackage{mathtools}
+
+
+\newtheorem*{claim}{Claim}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{definition}{Definition}
+\begin{document}
+\title{INFO 4220 Homework 6}
+\author{Dominick Twitty}
+\date{}
+\maketitle
+
+\section{Bayesian Inference on eBay}
+Let $G$ be the event that a seller is good, $B$ be the event that the seller is bad, and $N$ be the event that a buyer has a bad experience with a seller. We are given the following information
+\begin{align*}
+P(G) = P(B) = 0.5 && P(N | B) = 0.3 && P(N | G) = 0.01 
+\end{align*}
+
+\begin{enumerate}[(a)]
+\item Using the formula for Bayesian inference given multiple observations, we see
+\begin{align*}
+P(B | \bar N^{10}) &= \frac{P(\bar N | B) ^ {10} P(B)}{P(\bar N | B) ^ {10} P(B) + P(\bar N | G) ^ {10} P(G)}\\
+&= \frac{(0.7)^{10} (0.5)}{(0.7)^{10} (0.5) + (0.99)^{10} (0.5)}\\
+&= 0.0303
+\end{align*}
+\item
+\begin{align*}
+P(B | \bar N^{1000} + N^{10}) &= \frac{P(\bar N | B) ^ {1000} P(N | B)^{10}P(B)}{P(\bar N | B) ^ {1000} P(N | B)^{10}P(B) + P(\bar N | G) ^ {1000} P(N | G)^{10}P(G)}\\
+ &= \frac{(0.7)^{1000}(0.3)^{10} (0.5)}{(0.7)^{1000}(0.3)^{10} (0.5) + (0.99)^{1000} (0.01)^{10} (0.5)}\\
+&= 1.71 \times 10^{-136}
+\end{align*}
+\begin{align*}
+P(B | \bar N^{1000} + N^{50}) &= \frac{P(\bar N | B) ^ {1000} P(N | B)^{50}P(B)}{P(\bar N | B) ^ {1000} P(N | B)^{50}P(B) + P(\bar N | G) ^ {1000} P(N | G)^{50}P(G)}\\
+ &= \frac{(0.7)^{1000}(0.3)^{50} (0.5)}{(0.7)^{1000}(0.3)^{50} (0.5) + (0.99)^{1000} (0.01)^{50} (0.5)}\\
+&= 2.08 \times 10^{-77}
+\end{align*}
+
+\item 
+\begin{align*}
+&P_A(\bar N) = P(\bar N | G) P_A(G) + P(\bar N | B) P_A(B) = (0.99)(0.9697) + (0.7)(0.0303) = 0.981\\
+&P_B(\bar N) = P(\bar N | G) P_B(G) + P(\bar N | B) P_B(B) = (0.99)(1) + (0.7)(0) = 0.99
+\end{align*}
+The buyer will be willing to pay $0.009v$ more to buy from $B$ than $A$.
+
+\end{enumerate}
+
+ 
+
+\section{}
+%TODO 2
+
+\section{}
+%TODO 3
+
+\section{}
+%TODO 4
+
+\end{document}
