@@ -3,7 +3,7 @@
 \usepackage{amsmath, amsthm, amssymb}
 \usepackage{enumerate}
 \usepackage{mathtools}
-
+\usepackage{nicefrac}
 
 \newtheorem*{claim}{Claim}
 \newtheorem{lemma}{Lemma}
@@ -51,13 +51,56 @@ The buyer will be willing to pay $0.009v$ more to buy from $B$ than $A$.
 
  
 
-\section{}
-%TODO 2
+\section{Equilibrium Fractions}
+\begin{enumerate}[(a)]
+\item
+\begin{enumerate}[i.]
+\item Let $h$ be the fraction of good cars sold. Given that $g = 0.8$, the value buyers are willing to pay for any car is $13.2$, which is higher than $v_g$. Thus all sellers are willing to put their car up for sale and all good cars are sold ($h = g$). When $g = 0.2$, the value buyers are willing to pay is $7.8$, which is below $v_g$. Thus owners of good cars are not willing to sell, and no good cars will be sold ($h = 0$). In both cases, 0 good cars sold is also an equilibrium.
 
-\section{}
-%TODO 3
+\item In order for all cars to be sold, the price that buyers are willing to pay must be at least as great as a seller's value for a good car. This tells us
+\[15 g + 6(1 - g) \geq 10\]
+So when $g^* = \nicefrac{4}{9}$, for any $g \geq g^*$, there is an equilibrium where all good cars are sold ($h = g$).
 
-\section{}
-%TODO 4
+\item We need the buyer's price to be at least 10. Then
+\[ 10 \leq 0.6 w_g + 0.4(6)\]
+Then $w_g$ needs to be at least $12.67$.
+\end{enumerate}
+
+\item Let $v_h$ be the seller's value for the highest-valued car. Then the expected seller value of a car is $\nicefrac{v_h}{2}$. In order for all cars to be sold, then the expected buyer value must exceed $v_h$. Then
+\[\alpha \nicefrac{v_h}{2} \geq v_h\]
+and $\alpha$ must be at least $2$ for all cars to be sold ($v_h = 1)$.  
+\end{enumerate}
+
+
+\section{Equilibria in Infinite Prisoners Dilemma}
+\begin{enumerate}[(a)]
+\item Given that both players always play $C$, then the total payoff for $P_2$ is
+\[\sum_{k = 0}^{\infty} r \delta^k = \frac{r}{1 - \delta} = \frac{2}{1 - \delta}\]
+\item As $P_2$ deviates at $N$ and $P_1$ is playing $G$, then $P_1$ will defect forever starting at $N + 1$. AS $P_2$ can no longer achieve $r$ or $t$, the best payoff is for $P_2$ to defect forever as well. As all outcomes are scaled equally, this choice is not dependent on the value of $\delta$.
+\item The total payoff for $P_2$ is 
+\[\frac{p \delta^{N + 1} -r (\delta^N - 1) + (1-\delta)\delta^N t}{1 - \delta} = \frac{\delta^{N + 1} -2 (\delta^N - 1) + 3(1-\delta)\delta^N}{1 - \delta}\]
+\item For both players playing $G$ to be a Nash equilibrium, then we need $\delta$ such that there does not exist some time $N$ for which the payoff of deviating is higher than the payoff of cooperating.
+\[\frac{r}{1 - \delta} \geq \frac{p \delta^{N + 1} -r (\delta^N - 1) + (1-\delta)\delta^N t}{1 - \delta}\]
+\[\vdots\]
+\[\delta \geq \frac{r - t}{p - t}\]
+\[\delta \geq \frac{1}{2}\]
+We showed in part (b) that assuming perfect play, once a player deviates they must continue to deviate given that the other is playing grim-trigger. However, if $\delta$ is small enough, then at some point a player could gain more from one step of deviation than they lose when the other player also deviates.
+\end{enumerate}
+
+\section{Specific Equilibria in Infinite Prisoners Dilemma}
+We calculated above that $G$ is an equilibrium set of strategies if 
+\[\delta \geq \frac{r - t}{p - t}\]
+\begin{enumerate}[(a)]
+\item $\delta \geq \frac{1}{4}$
+\item $\delta \geq \frac{3}{4}$
+\item $\delta \geq \frac{2}{5}$
+\item Changing $s$ does not actually affect the equilibrium. Say that $P_2$ deviates first. Then the total payoff for $P_2$ must be greater than that of $P_1$, as $P_2$ gets one turn of $t$ payoff and $P_1$ gets one turn of $s < t$ payoff. Therefore, it is only the first deviant we need to stop from defecting. $\delta$ must still be greater than or equal to one half.
+\end{enumerate}
+
+\begin{align*}
+ P(\o{G}|R^{10}) &= \frac{P(R|\o{G})^{10}P(\o{G})}{P(R)^{10}} \\
+ &= \frac{(1-0.3)^{10}(0.5)}{((0.3)(0.5)+(0.01)(0.5))^10} \\
+ &= \\
+\end{align*}
 
 \end{document}

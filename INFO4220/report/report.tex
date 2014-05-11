@@ -1,0 +1,78 @@
+\documentclass[11pt]{article}
+
+\usepackage{fullpage}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{mathtools}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{claim}{claim}
+\newtheorem*{lemma*}{Lemma}
+\newtheorem*{theorem*}{Theorem}
+\newtheorem*{claim*}{Claim}
+
+\title{Generalizations of Matching Problems}
+\author{Dominick Twitty (\texttt{dkt36})\\
+\and Kelvin Luu (\texttt{kl583})\\
+\and Jeff Tian (\texttt{yt336})
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+In this document we discuss our experience generalizing matching problems to include arbitrary sets and numbers of agents per match. As a driving example, we use the problem of allocating freshmen students to dorm rooms of various sizes. In the binary version of this problem, we attempt to maximize the number of students compatibly housed, and in the rank-order version we attempt to generate Pareto-efficient allocations. We found that in general these problems are very difficult (NP-complete), so we propose heuristics that provide certain benefits while keeping reasonable runtime.  
+\end{abstract}
+
+\section*{Introduction}
+Many matching problems involve one or two sets of agents, with each set having preferences for the other set. For example, in the College Admissions Problem, students have preferences for colleges and colleges have preferences for each individual student. Another example is the Stable Roommates Problem, in which there is one set of agents, each having preferences over the same set. We wanted to expand these problems with a mind for new and unusual situations. For instance, what if matchings can have any number of participants, or there are two sets of agents vying for the same properties?
+
+We drive our exploration with the following problem: How do you optimally assign college freshmen to dorm rooms. This question is close to home - at Cornell, new students must live on campus, have minimal choice in \textit{which} room they get, and can put forth compatibility profiles in the hopes of finding a good roommate. Furthermore, rooms range in size from one to four people in the extreme case. Many freshmen end up loving (or at least tolerating) their roommate, but others would gladly switch with another. \textit{How can we provide students with better roommates?}
+
+We propose two more formally defined problems, each related to the scenario above. First, given a list of students, the set of other students each one finds compatible, and a list of room sizes, we ask: \textbf{What room allocation maximizes the number of students compatibly housed?} This is the \textbf{Binary Freshman Roommates Problem}. We assume that all students can live by themselves. The second problem, the \textbf{Rank-Order Freshman Roommates Problem} asks for a stable or Pareto-efficient room allocation given that students have preferences over sets of potential roommates. We assume that all students can live with any set of roommates.
+
+\section*{The Binary Problem}
+Our analysis of these problems yielded one major revelation - the problems are \textbf{very hard}. Firstly, consider the algorithmic difficulty of the binary problem.
+
+\begin{claim*}
+The Binary Freshman Roommates Problem is NP-Complete.
+\end{claim*}
+
+\begin{proof}
+First, we note that a matching can be checked for validity in time at most quadratic in the number of students. We reduce from the clique problem. Given a graph $G = (V, E)$ and a number $k$, we encode the following FRP:
+\begin{itemize}
+\item Let the set of students equal the set of vertices.
+\item A student is compatible with another student if there exists an edge between their vertices.
+\item Let there be one room of size $k$, and $|V| - k$ rooms of capacity 1.
+\end{itemize}
+We then ask if all students can be housed. If there is a clique $C$ of size $k$ in $G$, then $C$ can be assigned compatibly to the large room, and all other vertices can take a single room. If there does not exists such a clique, then the large room cannot fill up completely. But then there would not be enough single rooms to satisfy the other vertices, and not all students could be housed. 
+\end{proof}
+
+Given that this problem is NP-complete, we became aware that any algorithm to solve this problem would not be polynomial time. Already we start to see how intractability precludes an automatic allocation. Not to be deterred, we consider how a school with massive computing power might tackle this problem. Luckily for the algorithmically-minded on our team, a brute-force approach to this problem has a comical runtime, as one  must check all permutations of all subsets of students. We also saw that this problem has multiple exponential-time components. One must enumerate cliques in the compatibility graph, and then assign those cliques as disjoint subsets to rooms. As such, we were unable to encode this problem in less than exponential space. However, given already enumerated cliques $C$, we can encode the following integer linear program:
+
+\begin{align*}
+\text{Maximize }   & \sum_{c \in C} |c| \, x_c &&\text{Maximize the total number of students covered}\\
+\text{Subject to } & \sum_{c \, : \, s \in c} x_c \leq 1 \text{ for all students $s$} && \text{Roommate sets are pairwise-disjoint}\\
+& \sum_{|c| \, \leq \, r} x_c \leq R \text{ for all $R$ rooms of size $r$} && \text{There are enough correctly-sized rooms}\\
+& x_c \in \{0, 1\} && \text{A roommate set is included or not}
+\end{align*}
+
+If there are $n$ students, $k$ is the size of the largest room, and there are $l$ rooms, in the worst case scenario there are $n^{k + 1} - 1$ cliques of size $k$ or less to deal with, giving $n + l$ equations of $n^{k + 1}$ variables.  After attacks involving maximum flow, saturation, set packing, and covering metrics, we found an ILP formulation is likely the most realistic as there exist fast exact and approximate solutions. There are also properties of this problem's real-world counterpart that simplify the problem. For example, if we split the students into males and females and disallow them from living together, then we remove a large number of possible cliques and (assuming an even split). If the maximum room size is 4, then we only have to deal with one sixteenth the number of variables.
+
+
+\section*{The Rank-Order Problem}
+We come to the conclusion that the binary version of this problem is too difficult to be interesting computationally. It would be hard to persuade a college to invest so much computing power into roommate matching when they would still have to house unmatched freshmen somewhere. This intractability begs for a simpler problem. We ask what a college might do when students can rank potential roommates in sets. 
+
+First, we discuss metrics for success for a matching $M$. Much like a blocking pair in the marriage problem, we define a \textit{blocking set} $T \notin M$ to be a set of students such that every student in $T$ prefers $T$ to their current roommates. Likewise, stability is defined to be the absence of a blocking set. As can be seen from the Stable Roommates Problem, which is a special case of RFRP, not every roommate market has a stable matching. In this case, we discuss Pareto-efficiency. The concept generalizes trivially, and encodes the nice property that not every student need have her favorite assignment, but she cannot change that assignment without strictly hurting someone else
+
+
+
+
+\end{document}

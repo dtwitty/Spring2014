@@ -1,0 +1,26 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{enumerate}
+\usepackage{mathtools}
+
+
+\newtheorem*{claim}{Claim}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{definition}{Definition}
+\begin{document}
+\title{INFO 4220 Blog Post 2 : A Less Tedious Deferred Acceptance Algorithm}
+\author{Dominick Twitty}
+\date{}
+\maketitle
+
+Consider the DA Algorithm, which requires that all participants have preferences over some subset of the opposite sex. Asking human participants to sort members of the opposite sex is unreasonable. Ignoring that naive humans generally use naive sorting algorithms, we run into the problem that when an agent sorts someone to the top of their preference list, any other match feels like settling. Likewise, being matched with your lowest preference has implications for feeling cheated and lowering self esteem. The heuristic for solving this problem is to rank more people in the hopes of getting a better match, but this process becomes tedious and doesn't address the root problems of sorting.
+
+Not to sound terrible, but were I to build a dating website, it would have an interface similar to Cornell Fetch, a website that caught flak for objectifying women as things to be ranked. My website would allow users of both sexes to rank each other in pairs. Pairwise comparisons are less tedious than sorting lists, and take away some of the feeling that any one potential mate is best or worst. We have seen in Tinder that participants willingly spend time making simple binary decisions about single mates, and it is not a big step up to choosing the better of two matches previously defined as compatible.
+
+The Stable Marriage problem has been shown to have solutions given incomplete preferences, but it can also be shown that it is a solvable problem given a partial ordering, even one with cycles. Cycle finding algorithms exist than can transform cyclic preferences into a weak preference list, or at least into an arbitrarily-ordered strict preference list. 
+
+Of course, there are drawbacks to this approach. First, and most glaringly, this is not an online process. The market must be fixed before the algorithms can be run, which immediately kills its chances as an actual website, save for strange practices such as only allowing matchings every day at 3:00. Secondly, the inclusion of weak preferences, as we showed in homework, can lead to unstable situations. Pareto-efficient or maximum Pareto-efficient matches may be a potential fallback.
+
+\end{document}

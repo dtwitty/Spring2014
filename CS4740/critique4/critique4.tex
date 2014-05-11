@@ -1,0 +1,19 @@
+\documentclass[12pt]{scrartcl}
+\usepackage{fullpage}
+\setkomafont{disposition}{\normalfont\bfseries}
+\begin{document}
+\title{CS 4740 Critique 4}
+\subtitle{``Grounded Language Learning from Video Described with Sentences''}
+\author{Paper by Haonan Yu and Jeffrey Mark Siskind \\
+Critique by Dominick Twitty \texttt{(dkt36)}}
+\date{}
+\maketitle
+
+I'd love to see how this system interacts with other robot learning systems, such as learning object categories by sight. If this algorithm could be adapted to online learning, one could imagine a system in which a new object is introduced to the robot, a natural language description is provided, and the robot could learn to describe scenes with natural language. 
+
+I enjoy the paper's rather novel use of the Viterbi algorithm. It was clever of them to abstract the problem of motion tracking into the problem of state transitions. It was also a good move to incorporate both the language and motion cost functions to minimize both at once.
+
+Speaking of natural language however, the authors say that the results of their system can be used to describe unseen videos based on old ones. An example of this would be nice. For now I'm not entirely sure what the system does with it's trained models besides match videos and sentences. More exploration of future work would have been nice. I would have liked to know more about the internal representation of word meanings, as this would have given a better idea of how to extrapolate into descriptions of new videos. The author's baselines also seem a bit weak, as one is trivial and the other doesn't actually use the video input. They could have tried adapting a pre-existing video system as their baseline. For example, they could have trained a classifier to detect chairs, then used  it to detect if a chair was in the video.
+
+
+\end{document}
