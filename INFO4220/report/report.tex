@@ -5,9 +5,16 @@
 \usepackage{mathtools}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{topaths,calc}
 
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
 
 
 \newtheorem{lemma}{Lemma}
@@ -36,7 +43,7 @@ Many matching problems involve one or two sets of agents, with each set having p
 
 We drive our exploration with the following problem: How do you optimally assign college freshmen to dorm rooms. This question is close to home - at Cornell, new students must live on campus, have minimal choice in \textit{which} room they get, and can put forth compatibility profiles in the hopes of finding a good roommate. Furthermore, rooms range in size from one to four people in the extreme case. Many freshmen end up loving (or at least tolerating) their roommate, but others would gladly switch with another. \textit{How can we provide students with better roommates?}
 
-We propose two more formally defined problems, each related to the scenario above. First, given a list of students, the set of other students each one finds compatible, and a list of room sizes, we ask: \textbf{What room allocation maximizes the number of students compatibly housed?} This is the \textbf{Binary Freshman Roommates Problem}. We assume that all students can live by themselves. The second problem, the \textbf{Rank-Order Freshman Roommates Problem} asks for a stable or Pareto-efficient room allocation given that students have preferences over sets of potential roommates. We assume that all students can live with any set of roommates.
+We propose two more formally defined problems, each related to the scenario above. First, given a list of students, the set of other students each one finds compatible, and a list of room sizes, we ask: \textbf{What room allocation maximizes the number of students compatibly housed?} This is the \textbf{Binary Freshman Roommates Problem}. We assume that all students can live by themselves. The second problem, the \textbf{Rank-Order Freshman Roommates Problem} asks for a stable or Pareto-efficient room allocation given that students have preferences over sets of potential roommates. We assume that preferences are strict, complete, and that the number of room slots equals the number of students.
 
 \section*{The Binary Problem}
 Our analysis of these problems yielded one major revelation - the problems are \textbf{very hard}. Firstly, consider the algorithmic difficulty of the binary problem.
@@ -70,9 +77,29 @@ If there are $n$ students, $k$ is the size of the largest room, and there are $l
 \section*{The Rank-Order Problem}
 We come to the conclusion that the binary version of this problem is too difficult to be interesting computationally. It would be hard to persuade a college to invest so much computing power into roommate matching when they would still have to house unmatched freshmen somewhere. This intractability begs for a simpler problem. We ask what a college might do when students can rank potential roommates in sets. 
 
-First, we discuss metrics for success for a matching $M$. Much like a blocking pair in the marriage problem, we define a \textit{blocking set} $T \notin M$ to be a set of students such that every student in $T$ prefers $T$ to their current roommates. Likewise, stability is defined to be the absence of a blocking set. As can be seen from the Stable Roommates Problem, which is a special case of RFRP, not every roommate market has a stable matching. In this case, we discuss Pareto-efficiency. The concept generalizes trivially, and encodes the nice property that not every student need have her favorite assignment, but she cannot change that assignment without strictly hurting someone else
+First, we discuss metrics for success for a matching $M$. Much like a blocking pair in the marriage problem, we define a \textit{blocking set} $T \notin M$ to be a set of students such that every student in $T$ prefers $T$ to their current roommates. Likewise, stability is defined to be the absence of a blocking set. As can be seen from the Stable Roommates Problem, which is a special case of RFRP, not every roommate market has a stable matching. In this case, we discuss Pareto-efficiency. The concept generalizes trivially, and encodes the nice property that not every student need have her favorite assignment, but she cannot change that assignment without strictly hurting someone else. 
+
+It can be shown that every FRP has a Pareto-efficient matching. Given that preferences are strict, any Pareto-improvement of a matching will cause a student to strictly benefit, and as there is a ceiling, one can only Pareto-improve a matching finitely many times. This gives us a basis for an algorithm: we can generate a Pareto-efficient matching by simply Pareto-dominating an existing matching. Consider matchings $\hat M \succ M$. Consider all student-room pairs $(S, r)$ in $\hat M$ but not in $M$. This must be the Pareto-improved set. Its existence implies some subset of rooms and covered students that could rearrange themselves to improve. If there is no way to do this, the matching must be Pareto-efficient. To encode instances where there are more room slots than students, fill empty slots with ``ghost'' students. These ghosts need not be on the preference list but are useful because they increase the number and size of dark edges.
+
+This is the basis of what we call the FRP HyperCycle Algorithm to generate a Pareto-efficient matching. Begin with an arbitrary matching $M$. Next, create a hypergraph $H$ with students and rooms as vertices. Create a \textbf{dark} hyperedge around every roommate set and their current room. Next, enumerate all blocking sets. For every blocking set $T$, create a \textbf{light} hyperedge around $T$ and $r$ for every compatible room $r$. Ask if there is some pairwise-disjoint sets of dark edges $D$ and light edges $L$ that cover the same set of vertices. If $D$ and $L$ exist, reassign along the edges of $L$ and repeat. If they do not exist, the matching is Pareto-efficient.
+
+The proof of correctness for this algorithm is informal. If $D$ and $L$ exist, then some coalition of students lives in (exactly covers) a set of rooms, and after transformation still exactly cover the set of rooms. Because every light edge represents a strict improvement, and every student in $D$ can be mapped to a distinct light edge, so reassigning along light edges remains valid, keeps the room occupancy constant, and improves the matching. If $D$ and $L$ do not exist, then no set of rooms can have their owners rearranged beneficially, and the matching is therefore Pareto-efficient.
+
+As an example, we encode a marriage market in RFRP:
+\[
+\begin{array}{c c c || c c c}
+m_1 & m_2 & m_3 & w_1 & w_2 & w_3\\\hline
+w_1 & w_2 & w_3 & m_1 & m_2 & m_3\\
+w_2 & w_3 & w_1 & m_3 & m_1 & m_2\\
+w_3 & w_1 & w_2 & m_2 & m_3 & m_1
+\end{array}
+\]
+
+Let there be three rooms of size 2 each. For simplicity let's put living alone or living with the same gender at the bottom of everyone's preference list. We start with $M = \{(m_1, w_2, r_1), (m_2, w_3, r_2), (m_3, w_1, r_3)\}$. We see that there are light 
 
 
 
+\section*{Approximations and Heuristics}
+A running theme in this paper is high difficulty. Both of our algorithms have exponential runtimes as a necessity. We ask what kind of approximations we can use to make these problems more tractable.
 
 \end{document}
